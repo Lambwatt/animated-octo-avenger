@@ -74,7 +74,9 @@ function nextFrame(){
 }
 
 function previousFrame(){
-	frame = (--frame)%patch.frames.length + patch.frames.length -1;
+	console.log("frame before = "+frame);
+	frame = ((--frame) + patch.frames.length) % patch.frames.length;
+	console.log("frame after = "+frame);
 }
 
 function submitLayerName(){
