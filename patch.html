@@ -7,8 +7,12 @@
 		<img id="leg" src="Leg.png" style="display:none;" />
 		<canvas id="canvas" height=512 width=1536>This browser does not support canvas</canvas>
 		<br>
-		<canvas id="layersAndFrames" height=256 width=1536></canvas>
+		<canvas id="layersAndFrames" height=256 width=1024></canvas>
 		<script src = "patch.js"></script>
+		<br>
+		<button id="previousFrame" onClick="previousFrame();">previous frame</button>		
+		<button id="nextFrame" onClick="nextFrame();">next frame</button>
+		<button id="pausePlay" onClick="togglePlay();">play</button>
 		<br>
 		<input type="text" id="layerFeild" onkeyup="if(event.keyCode == 13){submitLayerName();}"></input>
 	</body>
