@@ -64,7 +64,8 @@ function drawLayers(frameNum){
 	var patchLayers = patch.frames[frameNum];
 	var numLayers = patchLayers.length;
 	for(var i = numLayers-1; i>=0; i--){
-		layersContext.fillText(patchLayers[i].name,10,y,1000);
+		layersContext.strokeRect(10,y-23,1005,30);
+		layersContext.fillText(patchLayers[i].name,20,y,1000);
 		y+=30;
 	}
 }
