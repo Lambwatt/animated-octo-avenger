@@ -45,26 +45,38 @@ var layersCanvas = document.getElementById("layersAndFrames");
 var layersContext = layersCanvas.getContext("2d");
 
 var frame = 0;
+var selectedLayer = "";
+var renderCount = 0;
 
 setInterval(function() {
 		//console.log("frame = "+frame);
 		context.clearRect(0 , 0 , canvas.width, canvas.height); 
     drawFrame(context, frame, 0, 0, 96, 164);
-		if(playing) frame = (++frame)%(patch.frames.length);
+		if(playing && renderCount==0){ 
+			frame = (++frame)%(patch.frames.length);
+		}
+		renderCount = (++renderCount)%34;
 		document.getElementById("layerFeild").type = "hidden";
 		drawLayers(frame);
-	},1000);
+	},30);
 
 layersContext.font="32px Courier New";
 
 function drawLayers(frameNum){
 
+	layersContext.clearRect(0 , 0 , canvas.width, canvas.height);
+	
 	var y = 30;
 
 	var patchLayers = patch.frames[frameNum];
 	var numLayers = patchLayers.length;
 	for(var i = numLayers-1; i>=0; i--){
+		if(patchLayers[i].name == selectedLayer){
+			layersContext.fillStyle = "rgb(100,100,200)";
+			layersContext.fillRect(10,y-23,1005,30);	
+		}	
 		layersContext.strokeRect(10,y-23,1005,30);
+		layersContext.fillStyle = "rgb(0,0,0)";	
 		layersContext.fillText(patchLayers[i].name,20,y,1000);
 		y+=30;
 	}
@@ -90,8 +102,40 @@ var playing = false;
 function togglePlay(){
 	playing = !playing;
 	if(playing){
+		document.getElementById("nextFrame").style.visibility="hidden";
+		document.getElementById("previousFrame").style.visibility="hidden";
 		document.getElementById("pausePlay").innerHTML = "pause";
 	}else{
+		document.getElementById("nextFrame").style.visibility="visible";
+		document.getElementById("previousFrame").style.visibility="visible";
 		document.getElementById("pausePlay").innerHTML = "play";
 	}
 }
+
+function processLayerMouseClick(click_x, click_y){
+
+	var y = 30;
+
+	var patchLayers = patch.frames[frame];
+	var numLayers = patchLayers.length;
+	for(var i = numLayers-1; i>=0; i--){
+		if(click_x>10 && click_x<1005 && click_y>y-23 && click_y<y+7)
+			selectLayer(i);
+		//layersContext.strokeRect(10,y-23,1005,30);
+		//layersContext.fillText(patchLayers[i].name,20,y,1000);
+		y+=30;
+	}
+}
+
+function selectLayer(layerNum){
+	selectedLayer = patch.frames[frame][layerNum].name;
+}
+
+layersCanvas.addEventListener("click", function(e){
+    var click_x = e.pageX - this.offsetLeft;
+    var click_y = e.pageY - this.offsetTop;
+    if(click_x>=0 && click_x<layersCanvas.width && click_y>=0 && click_y<layersCanvas.height)
+    {
+        processLayerMouseClick(click_x, click_y);
+    }
+});
