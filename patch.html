@@ -1,10 +1,15 @@
 <html>
 	<head>
-    </head>
+		<link rel="stylesheet" type="text/css" href="patch.css">
+   </head>
 	<body>
 		<img id="torso" src="Torso.png" style="display:none;" />	
 		<img id="leg" src="Leg.png" style="display:none;" />
-		<canvas id="canvas" height=200 width=200>This browser does not support canvas</canvas>
+		<canvas id="canvas" height=512 width=1536>This browser does not support canvas</canvas>
+		<br>
+		<canvas id="layersAndFrames" height=256 width=1536></canvas>
 		<script src = "patch.js"></script>
+		<br>
+		<input type="text" id="layerFeild" onkeyup="if(event.keyCode == 13){submitLayerName();}"></input>
 	</body>
 </html>
