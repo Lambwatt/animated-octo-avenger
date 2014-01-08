@@ -47,8 +47,10 @@ var layersContext = layersCanvas.getContext("2d");
 var frame = 0;
 var selectedLayer = "";
 var renderCount = 0;
+var selected_layer_index = -1;
 
-var drop_index = null;
+var drop_index = -2;
+var drop_index_width = 20;
 var dragging = false;
 
 var layer_selection_x = 0;
@@ -79,17 +81,29 @@ function drawLayers(frameNum){
 
 	var patchLayers = patch.frames[frameNum];
 	var numLayers = patchLayers.length;
+	//var placed_index = false;
+
 	for(var i = numLayers-1; i>=0; i--){
+
+		
+		if((i==drop_index && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
+			layersContext.fillStyle = "rgb(100,100,200)";
+			layersContext.fillRect(15,y-10,1000,10);
+
+//	placed_index = true;
+
+			y+=20;
+		}
+		
 		if(dragging && patchLayers[i].name == selectedLayer){
 				layersContext.fillStyle = "rgb(100,100,200)";
-				layersContext.fillRect(layer_selection_x,layer_selection_y,1005,30);	
-				
+				layersContext.fillRect(layer_selection_x,layer_selection_y,1005,30);			
+
 				layersContext.strokeRect(layer_selection_x,layer_selection_y,1005,30);
 				layersContext.fillStyle = "rgb(0,0,0)";	
 				layersContext.fillText(patchLayers[i].name,layer_selection_x+10,layer_selection_y+23,1000);
 			
 		}else{
-			console.log("printing when not dragging");
 			if(patchLayers[i].name == selectedLayer){
 				layersContext.fillStyle = "rgb(100,100,200)";
 				layersContext.fillRect(10,y-23,1005,30);	
@@ -100,6 +114,12 @@ function drawLayers(frameNum){
 		}
 		y+=30;
 	}
+
+		if((i==drop_index && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
+			layersContext.fillStyle = "rgb(100,100,200)";
+			layersContext.fillRect(15,y-10,1000,10);
+		}
+
 }
 
 function nextFrame(){
@@ -159,6 +179,7 @@ function layerDrag(){
 
 function selectLayer(layerNum){
 	selectedLayer = patch.frames[frame][layerNum].name;
+	selected_layer_index = layerNum;
 }
 
 function setLayerSelectionOffsets(x, y, click_x, click_y){
@@ -188,7 +209,26 @@ layersCanvas.addEventListener("mousemove", function(e){
 		layer_selection_y = mouse_y + layer_selection_y_offset;
 
 		//set drop index
-		//if(layer_selection_y<(drop_index*30+))
+
+		if(dragging){
+			console.log(((drop_index*30)+30)+":"+layer_selection_y+":"+((drop_index*30)+50));
+	
+			if((layer_selection_y<((drop_index*30))|| layer_selection_y>((drop_index*30)+50))){
+				var y_from_top = 30
+				var layers = patch.frames[frame]
+				console.log("triggered");
+				for(var i = layers.length-1; i >= 0; i--){
+					console.log("potential boundary "+y_from_top);
+					if(layer_selection_y<y_from_top){
+						break;
+					}
+					y_from_top+=30;
+				}
+				drop_index = i;
+				console.log("new drop index = "+drop_index);
+			}
+		}	
+			
  });
 
 layersCanvas.addEventListener("mouseup", function(e){
@@ -201,5 +241,9 @@ layersCanvas.addEventListener("mouseup", function(e){
 	if(dragging){
 		console.log("released mouse");
 		dragging = false;
+
+		//Place layer
+
+		drop_index = -2;
 	}
 });
