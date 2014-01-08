@@ -48,6 +48,15 @@ var frame = 0;
 var selectedLayer = "";
 var renderCount = 0;
 
+var drop_index = null;
+var dragging = false;
+
+var layer_selection_x = 0;
+var layer_selection_x_offset = 0;
+var layer_selection_y = 0;
+var layer_selection_y_offset = 0;
+
+
 setInterval(function() {
 		//console.log("frame = "+frame);
 		context.clearRect(0 , 0 , canvas.width, canvas.height); 
@@ -71,13 +80,24 @@ function drawLayers(frameNum){
 	var patchLayers = patch.frames[frameNum];
 	var numLayers = patchLayers.length;
 	for(var i = numLayers-1; i>=0; i--){
-		if(patchLayers[i].name == selectedLayer){
-			layersContext.fillStyle = "rgb(100,100,200)";
-			layersContext.fillRect(10,y-23,1005,30);	
-		}	
-		layersContext.strokeRect(10,y-23,1005,30);
-		layersContext.fillStyle = "rgb(0,0,0)";	
-		layersContext.fillText(patchLayers[i].name,20,y,1000);
+		if(dragging && patchLayers[i].name == selectedLayer){
+				layersContext.fillStyle = "rgb(100,100,200)";
+				layersContext.fillRect(layer_selection_x,layer_selection_y,1005,30);	
+				
+				layersContext.strokeRect(layer_selection_x,layer_selection_y,1005,30);
+				layersContext.fillStyle = "rgb(0,0,0)";	
+				layersContext.fillText(patchLayers[i].name,layer_selection_x+10,layer_selection_y+23,1000);
+			
+		}else{
+			console.log("printing when not dragging");
+			if(patchLayers[i].name == selectedLayer){
+				layersContext.fillStyle = "rgb(100,100,200)";
+				layersContext.fillRect(10,y-23,1005,30);	
+			}	
+			layersContext.strokeRect(10,y-23,1005,30);
+			layersContext.fillStyle = "rgb(0,0,0)";	
+			layersContext.fillText(patchLayers[i].name,20,y,1000);
+		}
 		y+=30;
 	}
 }
@@ -115,27 +135,71 @@ function togglePlay(){
 function processLayerMouseClick(click_x, click_y){
 
 	var y = 30;
+	dragging  = false;
+	//clearLayerSelection();
 
 	var patchLayers = patch.frames[frame];
 	var numLayers = patchLayers.length;
 	for(var i = numLayers-1; i>=0; i--){
-		if(click_x>10 && click_x<1005 && click_y>y-23 && click_y<y+7)
+		if(click_x>10 && click_x<1005 && click_y>y-23 && click_y<y+7){
 			selectLayer(i);
+			setLayerSelectionOffsets(10, y-23, click_x, click_y);
+			dragging = true;
+		}
 		//layersContext.strokeRect(10,y-23,1005,30);
 		//layersContext.fillText(patchLayers[i].name,20,y,1000);
 		y+=30;
 	}
+	
+}
+
+function layerDrag(){
+	
 }
 
 function selectLayer(layerNum){
 	selectedLayer = patch.frames[frame][layerNum].name;
 }
 
-layersCanvas.addEventListener("click", function(e){
+function setLayerSelectionOffsets(x, y, click_x, click_y){
+	layer_selection_x = x;
+	layer_selection_x_offset = x - click_x;
+	layer_selection_y = y;
+	layer_selection_y_offset = y - click_y;
+}
+
+layersCanvas.addEventListener("mousedown", function(e){
     var click_x = e.pageX - this.offsetLeft;
     var click_y = e.pageY - this.offsetTop;
     if(click_x>=0 && click_x<layersCanvas.width && click_y>=0 && click_y<layersCanvas.height)
     {
         processLayerMouseClick(click_x, click_y);
     }
+});
+
+
+layersCanvas.addEventListener("mousemove", function(e){
+
+    var mouse_x = e.pageX - this.offsetLeft;
+    var mouse_y = e.pageY - this.offsetTop;
+
+		//set selection coords
+		layer_selection_x = mouse_x + layer_selection_x_offset;
+		layer_selection_y = mouse_y + layer_selection_y_offset;
+
+		//set drop index
+		//if(layer_selection_y<(drop_index*30+))
+ });
+
+layersCanvas.addEventListener("mouseup", function(e){
+    /*var click_x = e.pageX - this.offsetLeft;
+    var click_y = e.pageY - this.offsetTop;
+    if(click_x>=0 && click_x<layersCanvas.width && click_y>=0 && click_y<layersCanvas.height)
+    {
+        processLayerMouseClick(click_x, click_y);
+    }*/
+	if(dragging){
+		console.log("released mouse");
+		dragging = false;
+	}
 });
