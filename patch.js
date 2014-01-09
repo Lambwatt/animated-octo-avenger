@@ -86,7 +86,7 @@ function drawLayers(frameNum){
 	for(var i = numLayers-1; i>=0; i--){
 
 		
-		if((i==drop_index && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
+		if(i==drop_index){// && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
 			layersContext.fillStyle = "rgb(100,100,200)";
 			layersContext.fillRect(15,y-10,1000,10);
 
@@ -111,14 +111,15 @@ function drawLayers(frameNum){
 			layersContext.strokeRect(10,y-23,1005,30);
 			layersContext.fillStyle = "rgb(0,0,0)";	
 			layersContext.fillText(patchLayers[i].name,20,y,1000);
+
+			y+=30;
 		}
-		y+=30;
 	}
 
-		if((i==drop_index && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
-			layersContext.fillStyle = "rgb(100,100,200)";
-			layersContext.fillRect(15,y-10,1000,10);
-		}
+	if((i==drop_index && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
+		layersContext.fillStyle = "rgb(100,100,200)";
+		layersContext.fillRect(15,y-10,1000,10);
+	}
 
 }
 
