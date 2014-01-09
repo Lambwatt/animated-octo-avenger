@@ -85,7 +85,6 @@ function drawLayers(frameNum){
 
 	for(var i = numLayers-1; i>=0; i--){
 
-		
 		if(i==drop_index){// && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
 			layersContext.fillStyle = "rgb(100,100,200)";
 			layersContext.fillRect(15,y-10,1000,10);
@@ -95,7 +94,7 @@ function drawLayers(frameNum){
 			y+=20;
 		}
 		
-		if(dragging && patchLayers[i].name == selectedLayer){
+		if(dragging && i== selected_layer_index){
 				layersContext.fillStyle = "rgb(100,100,200)";
 				layersContext.fillRect(layer_selection_x,layer_selection_y,1005,30);			
 
@@ -104,7 +103,7 @@ function drawLayers(frameNum){
 				layersContext.fillText(patchLayers[i].name,layer_selection_x+10,layer_selection_y+23,1000);
 			
 		}else{
-			if(patchLayers[i].name == selectedLayer){
+			if(i == selected_layer_index){
 				layersContext.fillStyle = "rgb(100,100,200)";
 				layersContext.fillRect(10,y-23,1005,30);	
 			}	
@@ -157,15 +156,16 @@ function processLayerMouseClick(click_x, click_y){
 
 	var y = 30;
 	dragging  = false;
-	//clearLayerSelection();
 
 	var patchLayers = patch.frames[frame];
 	var numLayers = patchLayers.length;
+	clearSelectedLayer();
 	for(var i = numLayers-1; i>=0; i--){
 		if(click_x>10 && click_x<1005 && click_y>y-23 && click_y<y+7){
 			selectLayer(i);
 			setLayerSelectionOffsets(10, y-23, click_x, click_y);
 			dragging = true;
+			drop_index = i;
 		}
 		//layersContext.strokeRect(10,y-23,1005,30);
 		//layersContext.fillText(patchLayers[i].name,20,y,1000);
@@ -174,13 +174,14 @@ function processLayerMouseClick(click_x, click_y){
 	
 }
 
-function layerDrag(){
-	
+function selectLayer(layerNum){
+	//selectedLayer = patch.frames[frame][layerNum].name;
+	selected_layer_index = layerNum;
 }
 
-function selectLayer(layerNum){
-	selectedLayer = patch.frames[frame][layerNum].name;
-	selected_layer_index = layerNum;
+function clearSelectedLayer(){
+	console.log("cleared");
+	selected_layer_index = null;
 }
 
 function setLayerSelectionOffsets(x, y, click_x, click_y){
@@ -199,7 +200,6 @@ layersCanvas.addEventListener("mousedown", function(e){
     }
 });
 
-
 layersCanvas.addEventListener("mousemove", function(e){
 
     var mouse_x = e.pageX - this.offsetLeft;
@@ -214,36 +214,67 @@ layersCanvas.addEventListener("mousemove", function(e){
 		if(dragging){
 			console.log(((drop_index*30)+30)+":"+layer_selection_y+":"+((drop_index*30)+50));
 	
-			if((layer_selection_y<((drop_index*30))|| layer_selection_y>((drop_index*30)+50))){
+			if((layer_selection_y<((drop_index*30)) || layer_selection_y>((drop_index*30)+50))){
 				var y_from_top = 30
 				var layers = patch.frames[frame]
 				console.log("triggered");
+				drop_index = 0;
 				for(var i = layers.length-1; i >= 0; i--){
-					console.log("potential boundary "+y_from_top);
+				//	console.log("potential boundary "+y_from_top);
 					if(layer_selection_y<y_from_top){
+						drop_index = i;
 						break;
 					}
 					y_from_top+=30;
 				}
-				drop_index = i;
-				console.log("new drop index = "+drop_index);
+				
+								
+				//console.log("new drop index = "+drop_index);
 			}
 		}	
 			
  });
 
 layersCanvas.addEventListener("mouseup", function(e){
-    /*var click_x = e.pageX - this.offsetLeft;
-    var click_y = e.pageY - this.offsetTop;
-    if(click_x>=0 && click_x<layersCanvas.width && click_y>=0 && click_y<layersCanvas.height)
-    {
-        processLayerMouseClick(click_x, click_y);
-    }*/
-	if(dragging){
+  if(dragging){
 		console.log("released mouse");
 		dragging = false;
 
 		//Place layer
+		var newLayersArrangement = [];
+		//var temp = null;
+		
+		console.log("dropping at index"+drop_index);
+
+		for(var i = 0; i<patch.frames[frame].length; i++){
+	
+			if(drop_index>selected_layer_index){
+				if(i!=selected_layer_index) 
+					newLayersArrangement.push(patch.frames[frame][i]);
+				if(i==drop_index){
+				 	newLayersArrangement.push(patch.frames[frame][selected_layer_index]);
+					//console.log("dropped at "+i);
+					//selectLayer(newLayersArrangement.length);
+				}
+			}else{
+				if(i==drop_index){
+				 	newLayersArrangement.push(patch.frames[frame][selected_layer_index]);
+					//console.log("dropped at "+i);
+					//selectLayer(newLayersArrangement.length);
+				}
+				if(i!=selected_layer_index) 
+					newLayersArrangement.push(patch.frames[frame][i]);
+			}
+		}
+
+		//selectLayer(drop_index);
+		patch.frames[frame] = newLayersArrangement;
+		clearSelectedLayer();
+		//var temp = patch.frames[frame][drop_index];
+		
+		
+		//patch.frames[frame][drop_index] =;
+		
 
 		drop_index = -2;
 	}
