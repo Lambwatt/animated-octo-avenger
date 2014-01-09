@@ -84,26 +84,28 @@ function drawLayers(frameNum){
 	//var placed_index = false;
 
 	for(var i = numLayers-1; i>=0; i--){
-
-		if(i==drop_index){// && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
-			layersContext.fillStyle = "rgb(100,100,200)";
-			layersContext.fillRect(15,y-10,1000,10);
-
-//	placed_index = true;
-
-			y+=20;
-		}
-		
-		if(dragging && i== selected_layer_index){
+		if(drop_index > selected_layer_index){
+			if(i==drop_index){// && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
 				layersContext.fillStyle = "rgb(100,100,200)";
-				layersContext.fillRect(layer_selection_x,layer_selection_y,1005,30);			
+				layersContext.fillRect(15,y-10,1000,10);
 
-				layersContext.strokeRect(layer_selection_x,layer_selection_y,1005,30);
-				layersContext.fillStyle = "rgb(0,0,0)";	
-				layersContext.fillText(patchLayers[i].name,layer_selection_x+10,layer_selection_y+23,1000);
-			
+				y+=20;
+			}
 		}else{
+			if(i==drop_index-1){// && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
+				layersContext.fillStyle = "rgb(100,100,200)";
+				layersContext.fillRect(15,y-10,1000,10);
+
+				y+=20;
+			}
+
+		}
+
+		
+								
+
 			if(i == selected_layer_index){
+				if(dragging) continue;
 				layersContext.fillStyle = "rgb(100,100,200)";
 				layersContext.fillRect(10,y-23,1005,30);	
 			}	
@@ -112,14 +114,31 @@ function drawLayers(frameNum){
 			layersContext.fillText(patchLayers[i].name,20,y,1000);
 
 			y+=30;
+		
+	}
+
+	if(drop_index > selected_layer_index){
+		if(i==drop_index){// && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
+			layersContext.fillStyle = "rgb(100,100,200)";
+			layersContext.fillRect(15,y-10,1000,10);
+		}
+	}else{
+		if(i==drop_index-1){// && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
+			layersContext.fillStyle = "rgb(100,100,200)";
+			layersContext.fillRect(15,y-10,1000,10);
 		}
 	}
 
-	if((i==drop_index && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
-		layersContext.fillStyle = "rgb(100,100,200)";
-		layersContext.fillRect(15,y-10,1000,10);
-	}
+	if(dragging){
 
+		layersContext.fillStyle = "rgb(100,100,200)";
+		layersContext.fillRect(layer_selection_x,layer_selection_y,1005,30);			
+
+		layersContext.strokeRect(layer_selection_x,layer_selection_y,1005,30);
+		layersContext.fillStyle = "rgb(0,0,0)";	
+		layersContext.fillText(patchLayers[selected_layer_index].name,layer_selection_x+10,layer_selection_y+23,1000);
+
+	}
 }
 
 function nextFrame(){
