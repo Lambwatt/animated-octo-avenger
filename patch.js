@@ -29,12 +29,23 @@ function drawFrame(context, frameNum, x, y, width, height){
 	
 	for(var l in patchLayers){
 		//console.log(patchLayers[l].img);
-		
+
+
 		context.drawImage(patchLayers[l].img, 
 			(patchLayers[l].x*widthRatio)+x, 
 			(patchLayers[l].y*heightRatio)+y,
 			patchLayers[l].width * widthRatio,
 			patchLayers[l].height * heightRatio);
+
+		if(l == canvas_selection_index){
+			context.strokeStyle = "rgb(100,200,100)";	
+			context.strokeRect(
+				(patchLayers[l].x*widthRatio)+x, 
+				(patchLayers[l].y*heightRatio)+y,
+				patchLayers[l].width * widthRatio,
+				patchLayers[l].height * heightRatio);
+
+		}		
 	}
 }
 
@@ -58,6 +69,10 @@ var layer_selection_x_offset = 0;
 var layer_selection_y = 0;
 var layer_selection_y_offset = 0;
 
+var canvas_drag = false;
+var canvas_selection_index = -1;
+var canvas_selection_x_offset = 0;
+var canvas_selection_y_offset = 0;
 
 setInterval(function() {
 		//console.log("frame = "+frame);
@@ -101,19 +116,17 @@ function drawLayers(frameNum){
 
 		}
 
-		
-								
+		if(i == selected_layer_index){
+			if(dragging) continue;
+			layersContext.fillStyle = "rgb(100,100,200)";
+			layersContext.fillRect(10,y-23,1005,30);	
+		}	
+		layersContext.strokeStyle = "rgb(0,0,0)";
+		layersContext.strokeRect(10,y-23,1005,30);
+		layersContext.fillStyle = "rgb(0,0,0)";	
+		layersContext.fillText(patchLayers[i].name,20,y,1000);
 
-			if(i == selected_layer_index){
-				if(dragging) continue;
-				layersContext.fillStyle = "rgb(100,100,200)";
-				layersContext.fillRect(10,y-23,1005,30);	
-			}	
-			layersContext.strokeRect(10,y-23,1005,30);
-			layersContext.fillStyle = "rgb(0,0,0)";	
-			layersContext.fillText(patchLayers[i].name,20,y,1000);
-
-			y+=30;
+		y+=30;
 		
 	}
 
@@ -210,6 +223,8 @@ function setLayerSelectionOffsets(x, y, click_x, click_y){
 	layer_selection_y_offset = y - click_y;
 }
 
+//Layer control events
+
 layersCanvas.addEventListener("mousedown", function(e){
     var click_x = e.pageX - this.offsetLeft;
     var click_y = e.pageY - this.offsetTop;
@@ -297,4 +312,68 @@ layersCanvas.addEventListener("mouseup", function(e){
 
 		drop_index = -2;
 	}
+});
+
+function processCanvasMouseClick(click_x, click_y){
+	var hit = false;
+	console.log("falsified");
+	for(var i in patch.frames[frame]){
+		var target =  patch.frames[frame][i];
+		console.log("click at ["+click_x+","+click_y+"]. x = "+target.x+" x+w"+ (target.x + target.width)+" y = "+ target.y +" y+h"+ (target.y + target.height) )
+		if(click_x > target.x && click_x < target.x + target.width && click_y > target.y && click_y < target.y + target.height){
+
+			hit = true;
+			
+			console.log("canvasSelectionIndex = "+canvas_selection_index);
+			if(canvas_selection_index == i){
+				console.log("startDrag");
+				canvas_drag = true;
+			}
+			else
+			{
+				console.log("set to "+i);
+				canvas_selection_index = i;
+				canvas_selection_x_offset = target.x - click_x;
+				canvas_selection_y_offset = target.y - click_y;
+			}
+		}
+		
+	}
+
+	console.log("hit?"+hit);
+	if(!hit){
+		console.log("nullified");
+		canvas_selection_index = null;
+		canvas_selection_x_offset = 0;
+		canvas_selection_y_offset = 0;
+	}
+
+}
+
+canvas.addEventListener("mousedown", function(e){
+    var click_x = e.pageX - this.offsetLeft;
+    var click_y = e.pageY - this.offsetTop;
+    if(click_x>=0 && click_x<layersCanvas.width && click_y>=0 && click_y<layersCanvas.height)
+    {
+        processCanvasMouseClick(click_x, click_y);
+    }
+});
+
+canvas.addEventListener("mousemove", function(e){
+
+		if(canvas_drag){
+   	 var mouse_x = e.pageX - this.offsetLeft;
+   	 var mouse_y = e.pageY - this.offsetTop;
+	
+			//set selection coords
+			console.log("selectionAtDragTime = "+canvas_selection_index);
+			patch.frames[frame][canvas_selection_index].x = mouse_x + canvas_selection_x_offset;
+			patch.frames[frame][canvas_selection_index].y = mouse_y + canvas_selection_y_offset;
+		}
+
+});
+
+canvas.addEventListener("mouseup", function(e){
+	
+	canvas_drag = false;
 });
