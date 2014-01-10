@@ -10,10 +10,17 @@
 		<canvas id="layersAndFrames" height=256 width=1024></canvas>
 		<script src = "patch.js"></script>
 		<br>
+
 		<button id="pausePlay" onClick="togglePlay();">play</button>
-		<button id="previousFrame" onClick="previousFrame();">previous frame</button>		
+		<button id="previousFrame" onClick="previousFrame();">previous frame</button>	
+		<b id=frameNum>0</b>	
 		<button id="nextFrame" onClick="nextFrame();">next frame</button>
+		<button id="addFrame" onClick="addFrame();">add frame</button>
+		<input type="text" pattern="\d*" value=""/>
 		<br>
+
+		<button id="printPatch" onClick="printPatch();">print patch data</button>
+		<b id=output></b>	
 		<input type="text" id="layerFeild" onkeyup="if(event.keyCode == 13){submitLayerName();}"></input>
 	</body>
 </html>

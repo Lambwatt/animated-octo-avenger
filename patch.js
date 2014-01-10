@@ -6,13 +6,14 @@
 	})();*/
 
 var patch = {"width":96, "height":164, "frames":[
-	[{"name":"leg1", "img":document.getElementById("leg"), "x":71, "y":100, "width":32, "height":64},
-	{"name":"leg2","img":document.getElementById("leg"), "x":25, "y":80, "width":32, "height":64},
-	{"name":"torso","img":document.getElementById("torso"), "x":16, "y":16, "width":96, "height":96}],
+	[{"name":"leg1", "img":"leg", "x":71, "y":100, "width":32, "height":64},
+	{"name":"leg2","img":"leg", "x":25, "y":80, "width":32, "height":64},
+	{"name":"torso","img":"torso", "x":16, "y":16, "width":96, "height":96}],
 
-	[{"name":"leg1","img":document.getElementById("leg"), "x":71, "y":80, "width":32, "height":64},
-	{"name":"leg2","img":document.getElementById("leg"), "x":25, "y":100, "width":32, "height":64},
-	{"name":"torso","img":document.getElementById("torso"), "x":16, "y":16, "width":96, "height":96}]]}
+	[{"name":"leg1","img":"leg", "x":71, "y":80, "width":32, "height":64},
+	{"name":"leg2","img":"leg", "x":25, "y":100, "width":32, "height":64},
+	{"name":"torso","img":"torso", "x":16, "y":16, "width":96, "height":96}]]}
+
 
 function drawFrame(context, frameNum, x, y, width, height){
 	//console.log("who ie calling me?");
@@ -27,11 +28,13 @@ function drawFrame(context, frameNum, x, y, width, height){
 	}
 	//console.log(widthRatio+", "+heightRatio);
 	
-	for(var l in patchLayers){
-		//console.log(patchLayers[l].img);
+	for(var l = 0; l< patchLayers.length; l++){
+/*		console.log(patchLayers);
+		console.log("drawing layer "+l);
+		console.log(patchLayers[l].img);
 
-
-		context.drawImage(patchLayers[l].img, 
+		console.log("img = "+patchLayers[l].img);
+*/	context.drawImage(document.getElementById(patchLayers[l].img), 
 			(patchLayers[l].x*widthRatio)+x, 
 			(patchLayers[l].y*heightRatio)+y,
 			patchLayers[l].width * widthRatio,
@@ -80,6 +83,7 @@ setInterval(function() {
     drawFrame(context, frame, 0, 0, 96, 164);
 		if(playing && renderCount==0){ 
 			frame = (++frame)%(patch.frames.length);
+			document.getElementById("frameNum").innerHTML = frame;
 		}
 		renderCount = (++renderCount)%34;
 		document.getElementById("layerFeild").type = "hidden";
@@ -131,13 +135,11 @@ function drawLayers(frameNum){
 	}
 
 	if(drop_index > selected_layer_index){
-		if(i==drop_index){// && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
-			layersContext.fillStyle = "rgb(100,100,200)";
+		if(i==drop_index){			layersContext.fillStyle = "rgb(100,100,200)";
 			layersContext.fillRect(15,y-10,1000,10);
 		}
 	}else{
-		if(i==drop_index-1){// && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
-			layersContext.fillStyle = "rgb(100,100,200)";
+		if(i==drop_index-1){			layersContext.fillStyle = "rgb(100,100,200)";
 			layersContext.fillRect(15,y-10,1000,10);
 		}
 	}
@@ -154,19 +156,53 @@ function drawLayers(frameNum){
 	}
 }
 
+function addFrame(){
+	var length = patch.frames.length;
+	var newFrame = new Array();
+	for(var i in patch.frames[length - 1]){
+		var newLayer = new Object();
+		console.log("layer copied = "+i);
+		for(var v in patch.frames[length - 1][i]){
+			var newVal= patch.frames[length - 1][i][v];
+			console.log("object copied = "+o+" with value "+newVal);
+			
+			newLayer[v] = newVal;
+		}
+		newFrame[i] = newLayer;
+	}
+	
+	//console.log(newFrame)
+	patch.frames[length] = newFrame;//;*/
+	console.log(patch.frames[length]);
+
+	
+	//patch.frames[length] = JSON.parse(test)
+
+	
+}
+
 function nextFrame(){
 	frame = (++frame)%(patch.frames.length);
+	document.getElementById("frameNum").innerHTML = frame;
+
 }
 
 function previousFrame(){
 	console.log("frame before = "+frame);
 	frame = ((--frame) + patch.frames.length) % patch.frames.length;
+	document.getElementById("frameNum").innerHTML = frame;
 	console.log("frame after = "+frame);
 }
 
 function submitLayerName(){
 	console.log("pressed enter");
 	console.log("layer name received = "+document.getElementById("layerFeild").value);
+}
+
+function printPatch(){
+	var string = JSON.stringify(patch);
+	document.getElementById("output").innerHTML = string;
+
 }
 
 var playing = false;
@@ -182,6 +218,7 @@ function togglePlay(){
 		document.getElementById("previousFrame").style.visibility="visible";
 		document.getElementById("pausePlay").innerHTML = "play";
 	}
+	
 }
 
 function processLayerMouseClick(click_x, click_y){
