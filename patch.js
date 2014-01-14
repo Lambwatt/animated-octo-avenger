@@ -15,8 +15,10 @@ var patch = {"width":96, "height":164, "frames":[
 	{"name":"torso","img":"torso", "x":16, "y":16, "width":96, "height":96}]]}
 
 
+//Frame rendering function
 function drawFrame(context, frameNum, x, y, width, height){
-	//console.log("who ie calling me?");
+	
+	//get layers for a frame and set width and height if they are not provided.
 	var patchLayers = patch.frames[frameNum];
 	if(width!=null && height!=null){
 		var widthRatio = width/patch.width;
@@ -26,72 +28,97 @@ function drawFrame(context, frameNum, x, y, width, height){
 		var widthRatio = 1;
 		var heightRatio = 1;
 	}
-	//console.log(widthRatio+", "+heightRatio);
 	
+	//draw each layer
 	for(var l = 0; l< patchLayers.length; l++){
-/*		console.log(patchLayers);
-		console.log("drawing layer "+l);
-		console.log(patchLayers[l].img);
-
-		console.log("img = "+patchLayers[l].img);
-*/	context.drawImage(document.getElementById(patchLayers[l].img), 
+		context.drawImage(document.getElementById(patchLayers[l].img), 
 			(patchLayers[l].x*widthRatio)+x, 
 			(patchLayers[l].y*heightRatio)+y,
 			patchLayers[l].width * widthRatio,
 			patchLayers[l].height * heightRatio);
 
+		//if selected, show selection highlighting
 		if(l == canvas_selection_index){
-			context.strokeStyle = "rgb(100,200,100)";	
+			context.strokeStyle = "rgb(100,200,100)";//Make thicker and more apparent	
 			context.strokeRect(
 				(patchLayers[l].x*widthRatio)+x, 
 				(patchLayers[l].y*heightRatio)+y,
 				patchLayers[l].width * widthRatio,
 				patchLayers[l].height * heightRatio);
-
 		}		
 	}
 }
 
+//assign canvas
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
 
+//assign layerCanvas (where the layers/frame will sit.) //consider renaming to timeline canvas
 var layersCanvas = document.getElementById("layersAndFrames");
 var layersContext = layersCanvas.getContext("2d");
 
-var frame = 0;
-var selectedLayer = "";
-var renderCount = 0;
-var selected_layer_index = -1;
+//initialize global variables
+var frame = 0;									//displayed frame /control
+var playing = false;						//are the frames playing automatically, disable frame editing if so.
+var selectedLayer = ""; 				//name of selected layer //Try to remove this. //control
+var renderCount = 0; 						//used to control frame rate //control
+var selected_layer_index = -1; 	//index of selected layer //control
+var drop_index = -2;						//index into which dragged layer will be dropped //control
+var drop_index_width = 20;			//width of the drop index line //Aesthetic
+var dragging = false; 					//should selected component follow mouse movement // conrol //rename to refer to layer/timeline
 
-var drop_index = -2;
-var drop_index_width = 20;
-var dragging = false;
+var layer_selection_x = 0;				//x of selected layer box //try to remove
+var layer_selection_x_offset = 0; //x difference between selected layer box and mouse
+var layer_selection_y = 0;				//y of selected layer box //try to remove
+var layer_selection_y_offset = 0;	//y difference between selected layer box and mouse
 
-var layer_selection_x = 0;
-var layer_selection_x_offset = 0;
-var layer_selection_y = 0;
-var layer_selection_y_offset = 0;
+var canvas_drag = false;						//should canvas item selcted follow mouse 
+var canvas_selection_index = -1; 		//canvas object selected in this frame
+var canvas_selection_x_offset = 0;	//x difference between selected object on canvas and mouse
+var canvas_selection_y_offset = 0;	//y difference between selected object on canvas and mouse
 
-var canvas_drag = false;
-var canvas_selection_index = -1;
-var canvas_selection_x_offset = 0;
-var canvas_selection_y_offset = 0;
+layersContext.font="32px Courier New";	//Layer display font
 
+//Fix these. need better frame control
+var intervalsPerFrame = 24;
+var x = document.getElementById("intPerFram").value;
+console.log("x = "+x);
+
+//set refresh interval for all screens. function runs all rendering //consider splitting up
 setInterval(function() {
-		//console.log("frame = "+frame);
-		context.clearRect(0 , 0 , canvas.width, canvas.height); 
+		//clear canvas
+		context.clearRect(0 , 0 , canvas.width, canvas.height);
+
+		//draw frame in canvas
     drawFrame(context, frame, 0, 0, 96, 164);
+
+		//Slows frame rate from intended 30 fps
 		if(playing && renderCount==0){ 
 			frame = (++frame)%(patch.frames.length);
 			document.getElementById("frameNum").innerHTML = frame;
 		}
-		renderCount = (++renderCount)%34;
-		document.getElementById("layerFeild").type = "hidden";
+		renderCount = (++renderCount)%intervalsPerFrame;
+		
+		document.getElementById("layerFeild").type = "hidden";//retrieve layer name if given //might be a relic of abandoned functionality
+
+		//draw layers section
 		drawLayers(frame);
 	},30);
 
-layersContext.font="32px Courier New";
+//need to fix this
+function submitIntervalsPerFrame(){
+	var val =  parseInt(document.getElementById("intPerFram").value);
+	console.log("val vs number is = "+(typeof val));
+	if( (typeof val) == 'number' ){
+		intervalsPerFrame = Math.abs(Math.floor(val));
+		console.log("val accepted");
+	}else{
+		document.getElementById("intPerFram").style.value = intervalsPerFrame;
+		console.log("val rejected");
+	}
+}
 
+//layer rendering function
 function drawLayers(frameNum){
 
 	layersContext.clearRect(0 , 0 , canvas.width, canvas.height);
@@ -100,18 +127,17 @@ function drawLayers(frameNum){
 
 	var patchLayers = patch.frames[frameNum];
 	var numLayers = patchLayers.length;
-	//var placed_index = false;
-
+	
 	for(var i = numLayers-1; i>=0; i--){
 		if(drop_index > selected_layer_index){
-			if(i==drop_index){// && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
+			if(i==drop_index){
 				layersContext.fillStyle = "rgb(100,100,200)";
 				layersContext.fillRect(15,y-10,1000,10);
 
 				y+=20;
 			}
 		}else{
-			if(i==drop_index-1){// && drop_index<selected_layer_index)|| (i==drop_index+1 && drop_index>=selected_layer_index)){
+			if(i==drop_index-1){
 				layersContext.fillStyle = "rgb(100,100,200)";
 				layersContext.fillRect(15,y-10,1000,10);
 
@@ -156,6 +182,7 @@ function drawLayers(frameNum){
 	}
 }
 
+//add frame (more precisely, append frame)
 function addFrame(){
 	var length = patch.frames.length;
 	var newFrame = new Array();
@@ -164,29 +191,25 @@ function addFrame(){
 		console.log("layer copied = "+i);
 		for(var v in patch.frames[length - 1][i]){
 			var newVal= patch.frames[length - 1][i][v];
-			console.log("object copied = "+o+" with value "+newVal);
+			console.log("object copied = "+v+" with value "+newVal);
 			
 			newLayer[v] = newVal;
 		}
 		newFrame[i] = newLayer;
 	}
 	
-	//console.log(newFrame)
-	patch.frames[length] = newFrame;//;*/
+	patch.frames[length] = newFrame;
 	console.log(patch.frames[length]);
-
-	
-	//patch.frames[length] = JSON.parse(test)
-
 	
 }
 
+//go to next frame
 function nextFrame(){
 	frame = (++frame)%(patch.frames.length);
 	document.getElementById("frameNum").innerHTML = frame;
-
 }
 
+//go to previous frame
 function previousFrame(){
 	console.log("frame before = "+frame);
 	frame = ((--frame) + patch.frames.length) % patch.frames.length;
@@ -194,19 +217,20 @@ function previousFrame(){
 	console.log("frame after = "+frame);
 }
 
+//send in layer name still not used
 function submitLayerName(){
 	console.log("pressed enter");
 	console.log("layer name received = "+document.getElementById("layerFeild").value);
 }
 
+//print patch JSON. Standin for a proper save/export routine
 function printPatch(){
 	var string = JSON.stringify(patch);
 	document.getElementById("output").innerHTML = string;
 
 }
 
-var playing = false;
-
+//durn playing on or off
 function togglePlay(){
 	playing = !playing;
 	if(playing){
@@ -221,6 +245,7 @@ function togglePlay(){
 	
 }
 
+//process a mouse click in the layer area
 function processLayerMouseClick(click_x, click_y){
 
 	var y = 30;
@@ -236,23 +261,23 @@ function processLayerMouseClick(click_x, click_y){
 			dragging = true;
 			drop_index = i;
 		}
-		//layersContext.strokeRect(10,y-23,1005,30);
-		//layersContext.fillText(patchLayers[i].name,20,y,1000);
 		y+=30;
 	}
 	
 }
 
+//select a layer
 function selectLayer(layerNum){
-	//selectedLayer = patch.frames[frame][layerNum].name;
 	selected_layer_index = layerNum;
 }
 
+//clear the selection
 function clearSelectedLayer(){
 	console.log("cleared");
 	selected_layer_index = null;
 }
 
+//set the object mouse offsets for the 
 function setLayerSelectionOffsets(x, y, click_x, click_y){
 	layer_selection_x = x;
 	layer_selection_x_offset = x - click_x;
@@ -262,6 +287,7 @@ function setLayerSelectionOffsets(x, y, click_x, click_y){
 
 //Layer control events
 
+//react to a mouse click on the layer area
 layersCanvas.addEventListener("mousedown", function(e){
     var click_x = e.pageX - this.offsetLeft;
     var click_y = e.pageY - this.offsetTop;
@@ -271,6 +297,7 @@ layersCanvas.addEventListener("mousedown", function(e){
     }
 });
 
+//react to mouse movement on the layer area
 layersCanvas.addEventListener("mousemove", function(e){
 
     var mouse_x = e.pageX - this.offsetLeft;
@@ -291,21 +318,18 @@ layersCanvas.addEventListener("mousemove", function(e){
 				console.log("triggered");
 				drop_index = 0;
 				for(var i = layers.length-1; i >= 0; i--){
-				//	console.log("potential boundary "+y_from_top);
 					if(layer_selection_y<y_from_top){
 						drop_index = i;
 						break;
 					}
 					y_from_top+=30;
 				}
-				
-								
-				//console.log("new drop index = "+drop_index);
 			}
 		}	
 			
  });
 
+//react to end of a mouse click on the layer area
 layersCanvas.addEventListener("mouseup", function(e){
   if(dragging){
 		console.log("released mouse");
@@ -313,7 +337,6 @@ layersCanvas.addEventListener("mouseup", function(e){
 
 		//Place layer
 		var newLayersArrangement = [];
-		//var temp = null;
 		
 		console.log("dropping at index"+drop_index);
 
@@ -324,33 +347,26 @@ layersCanvas.addEventListener("mouseup", function(e){
 					newLayersArrangement.push(patch.frames[frame][i]);
 				if(i==drop_index){
 				 	newLayersArrangement.push(patch.frames[frame][selected_layer_index]);
-					//console.log("dropped at "+i);
-					//selectLayer(newLayersArrangement.length);
 				}
 			}else{
 				if(i==drop_index){
 				 	newLayersArrangement.push(patch.frames[frame][selected_layer_index]);
-					//console.log("dropped at "+i);
-					//selectLayer(newLayersArrangement.length);
 				}
 				if(i!=selected_layer_index) 
 					newLayersArrangement.push(patch.frames[frame][i]);
 			}
 		}
 
-		//selectLayer(drop_index);
 		patch.frames[frame] = newLayersArrangement;
 		clearSelectedLayer();
-		//var temp = patch.frames[frame][drop_index];
 		
-		
-		//patch.frames[frame][drop_index] =;
-		
-
 		drop_index = -2;
 	}
 });
 
+//canvas control
+
+//process a click in the canvas area
 function processCanvasMouseClick(click_x, click_y){
 	var hit = false;
 	console.log("falsified");
@@ -387,6 +403,7 @@ function processCanvasMouseClick(click_x, click_y){
 
 }
 
+//react to a mouse click on the canvas area
 canvas.addEventListener("mousedown", function(e){
     var click_x = e.pageX - this.offsetLeft;
     var click_y = e.pageY - this.offsetTop;
@@ -396,6 +413,7 @@ canvas.addEventListener("mousedown", function(e){
     }
 });
 
+//react to mouse movement on the canvas area
 canvas.addEventListener("mousemove", function(e){
 
 		if(canvas_drag){
@@ -410,6 +428,7 @@ canvas.addEventListener("mousemove", function(e){
 
 });
 
+//react to end of a mouse click on the layer area
 canvas.addEventListener("mouseup", function(e){
 	
 	canvas_drag = false;

@@ -8,7 +8,6 @@
 		<canvas id="canvas" height=512 width=1536>This browser does not support canvas</canvas>
 		<br>
 		<canvas id="layersAndFrames" height=256 width=1024></canvas>
-		<script src = "patch.js"></script>
 		<br>
 
 		<button id="pausePlay" onClick="togglePlay();">play</button>
@@ -16,11 +15,13 @@
 		<b id=frameNum>0</b>	
 		<button id="nextFrame" onClick="nextFrame();">next frame</button>
 		<button id="addFrame" onClick="addFrame();">add frame</button>
-		<input type="text" pattern="\d*" value=""/>
+		<input type="text" id="intPerFram" value=24 onkeyup="if(event.keyCode == 13){submitIntervalsPerFrame();}"/>
 		<br>
 
 		<button id="printPatch" onClick="printPatch();">print patch data</button>
 		<b id=output></b>	
 		<input type="text" id="layerFeild" onkeyup="if(event.keyCode == 13){submitLayerName();}"></input>
+		<script src = "patch.js"></script>
+
 	</body>
 </html>
