@@ -16,7 +16,7 @@ var patch = {"width":96, "height":164, "frames":[
 
 
 //Frame rendering function
-function drawFrame(context, frameNum, x, y, width, height){
+function drawFrame(canvas_context, frameNum, x, y, width, height){
 	
 	//get layers for a frame and set width and height if they are not provided.
 	var patchLayers = patch.frames[frameNum];
@@ -31,7 +31,7 @@ function drawFrame(context, frameNum, x, y, width, height){
 	
 	//draw each layer
 	for(var l = 0; l< patchLayers.length; l++){
-		context.drawImage(document.getElementById(patchLayers[l].img), 
+		canvas_context.drawImage(document.getElementById(patchLayers[l].img), 
 			(patchLayers[l].x*widthRatio)+x, 
 			(patchLayers[l].y*heightRatio)+y,
 			patchLayers[l].width * widthRatio,
@@ -39,8 +39,8 @@ function drawFrame(context, frameNum, x, y, width, height){
 
 		//if selected, show selection highlighting
 		if(l == canvas_selection_index){
-			context.strokeStyle = "rgb(100,200,100)";//Make thicker and more apparent	
-			context.strokeRect(
+			canvas_context.strokeStyle = "rgb(100,200,100)";//Make thicker and more apparent	
+			canvas_context.strokeRect(
 				(patchLayers[l].x*widthRatio)+x, 
 				(patchLayers[l].y*heightRatio)+y,
 				patchLayers[l].width * widthRatio,
@@ -51,35 +51,34 @@ function drawFrame(context, frameNum, x, y, width, height){
 
 //assign canvas
 var canvas = document.getElementById("canvas");
-var context = canvas.getContext("2d");
+var canvas_context = canvas.getContext("2d");
 
 //assign layerCanvas (where the layers/frame will sit.) //consider renaming to timeline canvas
-var layersCanvas = document.getElementById("layersAndFrames");
-var layersContext = layersCanvas.getContext("2d");
+var timeline_canvas = document.getElementById("timeline_canvas");
+var timeline_context = timeline_canvas.getContext("2d");
 
 //initialize global variables
 var frame = 0;									//displayed frame /control
 var playing = false;						//are the frames playing automatically, disable frame editing if so.
-var selectedLayer = ""; 				//name of selected layer //Try to remove this. //control
-var renderCount = 0; 						//used to control frame rate //control
-var selected_layer_index = -1; 	//index of selected layer //control
-var drop_index = -2;						//index into which dragged layer will be dropped //control
-var drop_index_width = 20;			//width of the drop index line //Aesthetic
-var dragging = false; 					//should selected component follow mouse movement // conrol //rename to refer to layer/timeline
+var interval_count = 0; 						//used to control frame rate //control
 
-var layer_selection_x = 0;				//x of selected layer box //try to remove
-var layer_selection_x_offset = 0; //x difference between selected layer box and mouse
-var layer_selection_y = 0;				//y of selected layer box //try to remove
-var layer_selection_y_offset = 0;	//y difference between selected layer box and mouse
+var timeline_drop_index_height = 20;			//width of the drop index line //Aesthetic
+var timeline_drop_index = -2;						//index into which dragged layer will be dropped //control
+var timeline_drag = false; 					//should selected component follow mouse movement // conrol //rename to refer to layer/timeline
+
+var timeline_selection_index = -1; 	//index of selected layer //control
+var timeline_selection_x = 0;				//x of selected layer box 
+var timeline_selection_x_offset = 0; //x difference between selected layer box and mouse
+var timeline_selection_y = 0;				//y of selected layer box 
+var timeline_selection_y_offset = 0;	//y difference between selected layer box and mouse
 
 var canvas_drag = false;						//should canvas item selcted follow mouse 
 var canvas_selection_index = -1; 		//canvas object selected in this frame
 var canvas_selection_x_offset = 0;	//x difference between selected object on canvas and mouse
 var canvas_selection_y_offset = 0;	//y difference between selected object on canvas and mouse
 
-layersContext.font="32px Courier New";	//Layer display font
+timeline_context.font="32px Courier New";	//Layer display font
 
-//Fix these. need better frame control
 var intervalsPerFrame = 24;
 var x = document.getElementById("intPerFram").value;
 console.log("x = "+x);
@@ -87,17 +86,17 @@ console.log("x = "+x);
 //set refresh interval for all screens. function runs all rendering //consider splitting up
 setInterval(function() {
 		//clear canvas
-		context.clearRect(0 , 0 , canvas.width, canvas.height);
+		canvas_context.clearRect(0 , 0 , canvas.width, canvas.height);
 
 		//draw frame in canvas
-    drawFrame(context, frame, 0, 0, 96, 164);
+    drawFrame(canvas_context, frame, 0, 0, 96, 164);
 
 		//Slows frame rate from intended 30 fps
-		if(playing && renderCount==0){ 
+		if(playing && interval_count==0){ 
 			frame = (++frame)%(patch.frames.length);
 			document.getElementById("frameNum").innerHTML = frame;
 		}
-		renderCount = (++renderCount)%intervalsPerFrame;
+		interval_count = (++interval_count)%intervalsPerFrame;
 		
 		document.getElementById("layerFeild").type = "hidden";//retrieve layer name if given //might be a relic of abandoned functionality
 
@@ -121,7 +120,7 @@ function submitIntervalsPerFrame(){
 //layer rendering function
 function drawLayers(frameNum){
 
-	layersContext.clearRect(0 , 0 , canvas.width, canvas.height);
+	timeline_context.clearRect(0 , 0 , canvas.width, canvas.height);
 	
 	var y = 30;
 
@@ -129,55 +128,55 @@ function drawLayers(frameNum){
 	var numLayers = patchLayers.length;
 	
 	for(var i = numLayers-1; i>=0; i--){
-		if(drop_index > selected_layer_index){
-			if(i==drop_index){
-				layersContext.fillStyle = "rgb(100,100,200)";
-				layersContext.fillRect(15,y-10,1000,10);
+		if(timeline_drop_index > timeline_selection_index){
+			if(i==timeline_drop_index){
+				timeline_context.fillStyle = "rgb(100,100,200)";
+				timeline_context.fillRect(15,y-10,1000,10);
 
 				y+=20;
 			}
 		}else{
-			if(i==drop_index-1){
-				layersContext.fillStyle = "rgb(100,100,200)";
-				layersContext.fillRect(15,y-10,1000,10);
+			if(i==timeline_drop_index-1){
+				timeline_context.fillStyle = "rgb(100,100,200)";
+				timeline_context.fillRect(15,y-10,1000,10);
 
 				y+=20;
 			}
 
 		}
 
-		if(i == selected_layer_index){
-			if(dragging) continue;
-			layersContext.fillStyle = "rgb(100,100,200)";
-			layersContext.fillRect(10,y-23,1005,30);	
+		if(i == timeline_selection_index){
+			if(timeline_drag) continue;
+			timeline_context.fillStyle = "rgb(100,100,200)";
+			timeline_context.fillRect(10,y-23,1005,30);	
 		}	
-		layersContext.strokeStyle = "rgb(0,0,0)";
-		layersContext.strokeRect(10,y-23,1005,30);
-		layersContext.fillStyle = "rgb(0,0,0)";	
-		layersContext.fillText(patchLayers[i].name,20,y,1000);
+		timeline_context.strokeStyle = "rgb(0,0,0)";
+		timeline_context.strokeRect(10,y-23,1005,30);
+		timeline_context.fillStyle = "rgb(0,0,0)";	
+		timeline_context.fillText(patchLayers[i].name,20,y,1000);
 
 		y+=30;
 		
 	}
 
-	if(drop_index > selected_layer_index){
-		if(i==drop_index){			layersContext.fillStyle = "rgb(100,100,200)";
-			layersContext.fillRect(15,y-10,1000,10);
+	if(timeline_drop_index > timeline_selection_index){
+		if(i==timeline_drop_index){			timeline_context.fillStyle = "rgb(100,100,200)";
+			timeline_context.fillRect(15,y-10,1000,10);
 		}
 	}else{
-		if(i==drop_index-1){			layersContext.fillStyle = "rgb(100,100,200)";
-			layersContext.fillRect(15,y-10,1000,10);
+		if(i==timeline_drop_index-1){			timeline_context.fillStyle = "rgb(100,100,200)";
+			timeline_context.fillRect(15,y-10,1000,10);
 		}
 	}
 
-	if(dragging){
+	if(timeline_drag){
 
-		layersContext.fillStyle = "rgb(100,100,200)";
-		layersContext.fillRect(layer_selection_x,layer_selection_y,1005,30);			
+		timeline_context.fillStyle = "rgb(100,100,200)";
+		timeline_context.fillRect(timeline_selection_x,timeline_selection_y,1005,30);			
 
-		layersContext.strokeRect(layer_selection_x,layer_selection_y,1005,30);
-		layersContext.fillStyle = "rgb(0,0,0)";	
-		layersContext.fillText(patchLayers[selected_layer_index].name,layer_selection_x+10,layer_selection_y+23,1000);
+		timeline_context.strokeRect(timeline_selection_x,timeline_selection_y,1005,30);
+		timeline_context.fillStyle = "rgb(0,0,0)";	
+		timeline_context.fillText(patchLayers[timeline_selection_index].name,timeline_selection_x+10,timeline_selection_y+23,1000);
 
 	}
 }
@@ -249,7 +248,7 @@ function togglePlay(){
 function processLayerMouseClick(click_x, click_y){
 
 	var y = 30;
-	dragging  = false;
+	timeline_drag  = false;
 
 	var patchLayers = patch.frames[frame];
 	var numLayers = patchLayers.length;
@@ -258,8 +257,8 @@ function processLayerMouseClick(click_x, click_y){
 		if(click_x>10 && click_x<1005 && click_y>y-23 && click_y<y+7){
 			selectLayer(i);
 			setLayerSelectionOffsets(10, y-23, click_x, click_y);
-			dragging = true;
-			drop_index = i;
+			timeline_drag = true;
+			timeline_drop_index = i;
 		}
 		y+=30;
 	}
@@ -268,58 +267,58 @@ function processLayerMouseClick(click_x, click_y){
 
 //select a layer
 function selectLayer(layerNum){
-	selected_layer_index = layerNum;
+	timeline_selection_index = layerNum;
 }
 
 //clear the selection
 function clearSelectedLayer(){
 	console.log("cleared");
-	selected_layer_index = null;
+	timeline_selection_index = null;
 }
 
 //set the object mouse offsets for the 
 function setLayerSelectionOffsets(x, y, click_x, click_y){
-	layer_selection_x = x;
-	layer_selection_x_offset = x - click_x;
-	layer_selection_y = y;
-	layer_selection_y_offset = y - click_y;
+	timeline_selection_x = x;
+	timeline_selection_x_offset = x - click_x;
+	timeline_selection_y = y;
+	timeline_selection_y_offset = y - click_y;
 }
 
 //Layer control events
 
 //react to a mouse click on the layer area
-layersCanvas.addEventListener("mousedown", function(e){
+timeline_canvas.addEventListener("mousedown", function(e){
     var click_x = e.pageX - this.offsetLeft;
     var click_y = e.pageY - this.offsetTop;
-    if(click_x>=0 && click_x<layersCanvas.width && click_y>=0 && click_y<layersCanvas.height)
+    if(click_x>=0 && click_x<timeline_canvas.width && click_y>=0 && click_y<timeline_canvas.height)
     {
         processLayerMouseClick(click_x, click_y);
     }
 });
 
 //react to mouse movement on the layer area
-layersCanvas.addEventListener("mousemove", function(e){
+timeline_canvas.addEventListener("mousemove", function(e){
 
     var mouse_x = e.pageX - this.offsetLeft;
     var mouse_y = e.pageY - this.offsetTop;
 
 		//set selection coords
-		layer_selection_x = mouse_x + layer_selection_x_offset;
-		layer_selection_y = mouse_y + layer_selection_y_offset;
+		timeline_selection_x = mouse_x + timeline_selection_x_offset;
+		timeline_selection_y = mouse_y + timeline_selection_y_offset;
 
 		//set drop index
 
-		if(dragging){
-			console.log(((drop_index*30)+30)+":"+layer_selection_y+":"+((drop_index*30)+50));
+		if(timeline_drag){
+			console.log(((timeline_drop_index*30)+30)+":"+timeline_selection_y+":"+((timeline_drop_index*30)+50));
 	
-			if((layer_selection_y<((drop_index*30)) || layer_selection_y>((drop_index*30)+50))){
+			if((timeline_selection_y<((timeline_drop_index*30)) || timeline_selection_y>((timeline_drop_index*30)+50))){
 				var y_from_top = 30
 				var layers = patch.frames[frame]
 				console.log("triggered");
-				drop_index = 0;
+				timeline_drop_index = 0;
 				for(var i = layers.length-1; i >= 0; i--){
-					if(layer_selection_y<y_from_top){
-						drop_index = i;
+					if(timeline_selection_y<y_from_top){
+						timeline_drop_index = i;
 						break;
 					}
 					y_from_top+=30;
@@ -330,29 +329,29 @@ layersCanvas.addEventListener("mousemove", function(e){
  });
 
 //react to end of a mouse click on the layer area
-layersCanvas.addEventListener("mouseup", function(e){
-  if(dragging){
+timeline_canvas.addEventListener("mouseup", function(e){
+  if(timeline_drag){
 		console.log("released mouse");
-		dragging = false;
+		timeline_drag = false;
 
 		//Place layer
 		var newLayersArrangement = [];
 		
-		console.log("dropping at index"+drop_index);
+		console.log("dropping at index"+timeline_drop_index);
 
 		for(var i = 0; i<patch.frames[frame].length; i++){
 	
-			if(drop_index>selected_layer_index){
-				if(i!=selected_layer_index) 
+			if(timeline_drop_index>timeline_selection_index){
+				if(i!=timeline_selection_index) 
 					newLayersArrangement.push(patch.frames[frame][i]);
-				if(i==drop_index){
-				 	newLayersArrangement.push(patch.frames[frame][selected_layer_index]);
+				if(i==timeline_drop_index){
+				 	newLayersArrangement.push(patch.frames[frame][timeline_selection_index]);
 				}
 			}else{
-				if(i==drop_index){
-				 	newLayersArrangement.push(patch.frames[frame][selected_layer_index]);
+				if(i==timeline_drop_index){
+				 	newLayersArrangement.push(patch.frames[frame][timeline_selection_index]);
 				}
-				if(i!=selected_layer_index) 
+				if(i!=timeline_selection_index) 
 					newLayersArrangement.push(patch.frames[frame][i]);
 			}
 		}
@@ -360,7 +359,7 @@ layersCanvas.addEventListener("mouseup", function(e){
 		patch.frames[frame] = newLayersArrangement;
 		clearSelectedLayer();
 		
-		drop_index = -2;
+		timeline_drop_index = -2;
 	}
 });
 
@@ -407,7 +406,7 @@ function processCanvasMouseClick(click_x, click_y){
 canvas.addEventListener("mousedown", function(e){
     var click_x = e.pageX - this.offsetLeft;
     var click_y = e.pageY - this.offsetTop;
-    if(click_x>=0 && click_x<layersCanvas.width && click_y>=0 && click_y<layersCanvas.height)
+    if(click_x>=0 && click_x<timeline_canvas.width && click_y>=0 && click_y<timeline_canvas.height)
     {
         processCanvasMouseClick(click_x, click_y);
     }
