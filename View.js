@@ -48,9 +48,22 @@ function drawLayers(frameNum){
 	timeline_context.strokeStyle = "rgb(0,0,0)";
 	timeline_context.strokeRect(timeline_margin_width+timeline_label_width, y-23, timeline_width, timeline_layer_height);
 
-	y+= timeline_layer_height
-	//for(var i = 0; i<20; i++){
-	//}
+	timeline_context.beginPath();
+	for(var i = 0; i<15; i++){
+		timeline_context.moveTo(timeline_margin_width+timeline_label_width + (i*50),y-23);
+		timeline_context.lineTo(timeline_margin_width+timeline_label_width + (i*50),y+6);
+		
+		timeline_context.fillText(i, timeline_margin_width+timeline_label_width +(i*50)+2.5, y, 20);
+
+		timeline_context.moveTo(timeline_margin_width+timeline_label_width + (i*50) + 25,y-23);
+		timeline_context.lineTo(timeline_margin_width+timeline_label_width + (i*50) + 25,y+6);
+
+	}
+	timeline_context.stroke();
+
+
+	y+= timeline_layer_height;
+
 
 	var patchLayers = patch.frames[frameNum];//Replace with frame offset
 	var numLayers = patchLayers.length;
