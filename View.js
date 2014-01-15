@@ -45,10 +45,10 @@ function drawLayers(frameNum){
 	
 	var y = timeline_height_margin;
 	
-	timeline_context.strokeStyle = "rgb(0,0,0)";
-	timeline_context.strokeRect(timeline_margin_width+timeline_label_width, y-23, timeline_width, timeline_layer_height);
+//	timeline_context.strokeStyle = "rgb(0,0,0)";
+//	timeline_context.strokeRect(timeline_margin_width+timeline_label_width, y-23, timeline_width, timeline_layer_height);
 
-	timeline_context.beginPath();
+/*	timeline_context.beginPath();
 	for(var i = 0; i<15; i++){
 		timeline_context.moveTo(timeline_margin_width+timeline_label_width + (i*50),y-23);
 		timeline_context.lineTo(timeline_margin_width+timeline_label_width + (i*50),y+6);
@@ -59,10 +59,10 @@ function drawLayers(frameNum){
 		timeline_context.lineTo(timeline_margin_width+timeline_label_width + (i*50) + 25,y+6);
 
 	}
-	timeline_context.stroke();
+	timeline_context.stroke();*/
 
 
-	y+= timeline_layer_height;
+//	y+= timeline_layer_height;
 
 
 	var patchLayers = patch.frames[frameNum];//Replace with frame offset

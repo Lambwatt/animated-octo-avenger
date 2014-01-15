@@ -39,12 +39,14 @@ function drawFrame(canvas_context, frameNum, x, y, width, height){
 
 		//if selected, show selection highlighting
 		if(l == canvas_selection_index){
+			canvas_context.lineWidth = 5;
 			canvas_context.strokeStyle = "rgb(100,200,100)";//Make thicker and more apparent	
 			canvas_context.strokeRect(
 				(patchLayers[l].x*widthRatio)+x, 
 				(patchLayers[l].y*heightRatio)+y,
 				patchLayers[l].width * widthRatio,
 				patchLayers[l].height * heightRatio);
+			canvas_context.lineWidth = 1;
 		}		
 	}
 }
