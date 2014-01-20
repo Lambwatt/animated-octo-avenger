@@ -32,6 +32,46 @@ function addFrame(){
 	
 }
 
+function insertFrame(){
+	var newFrameset = new Array();
+	for(var j = 0; j<patch.frames.length; j++){
+		var newFrame = new Array();
+		for(var i = 0; i<patch.frames[j].length; i++){
+			var newLayer = new Object();
+			console.log("layer copied = "+i);
+			for(var v in patch.frames[j][i]){
+				var newVal= patch.frames[j][i][v];
+				//console.log("object copied = "+v+" with value "+newVal);
+			
+				newLayer[v] = newVal;
+			}
+			newFrame[i] = newLayer;
+		}
+		console.log("j+1 = "+ (1+j)+", j = "+j);
+		console.log("assigning frame to "+(j>frame ? (1+j): (j)));
+		newFrameset[j>frame ? j+1: j] = newFrame;
+
+		if(frame==j){
+			var newFrame = new Array();
+			for(var i in patch.frames[j]){
+				var newLayer = new Object();
+				console.log("layer copied = "+i);
+				for(var v in patch.frames[j][i]){
+					var newVal= patch.frames[j][i][v];
+					//console.log("object copied = "+v+" with value "+newVal);
+			
+					newLayer[v] = newVal;
+				}
+				newFrame[i] = newLayer;
+			}
+			console.log("assigning duplicate frame to "+(j+1));
+			newFrameset[j+1] = newFrame; 
+			//console.log(patch.frames[length]);
+		}
+	}
+	patch.frames = newFrameset;
+}
+
 //go to next frame
 function nextFrame(){
 	frame = (++frame)%(patch.frames.length);
