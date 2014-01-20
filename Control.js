@@ -72,6 +72,28 @@ function insertFrame(){
 	patch.frames = newFrameset;
 }
 
+function removeFrame(){
+	var newFrameset = new Array();
+	for(var j = 0; j<patch.frames.length; j++){
+		if(j!=frame){
+			var newFrame = new Array();
+			for(var i = 0; i<patch.frames[j].length; i++){
+				var newLayer = new Object();
+				console.log("layer copied = "+i);
+				for(var v in patch.frames[j][i]){
+					var newVal= patch.frames[j][i][v];
+					//console.log("object copied = "+v+" with value "+newVal);
+			
+					newLayer[v] = newVal;
+				}
+				newFrame[i] = newLayer;
+			}
+			newFrameset.push(newFrame);
+		}
+	}
+	patch.frames = newFrameset;
+}
+
 //go to next frame
 function nextFrame(){
 	frame = (++frame)%(patch.frames.length);

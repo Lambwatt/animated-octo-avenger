@@ -18,35 +18,37 @@ var patch = {"width":96, "height":164, "frames":[
 //Frame rendering function
 function drawFrame(canvas_context, frameNum, x, y, width, height){
 	
-	//get layers for a frame and set width and height if they are not provided.
-	var patchLayers = patch.frames[frameNum];
-	if(width!=null && height!=null){
-		var widthRatio = width/patch.width;
-		var heightRatio = height/patch.height;
-	}
-	else{
-		var widthRatio = 1;
-		var heightRatio = 1;
-	}
+	if(patch.frames.length != 0){
+		//get layers for a frame and set width and height if they are not provided.
+		var patchLayers = patch.frames[frameNum];
+		if(width!=null && height!=null){
+			var widthRatio = width/patch.width;
+			var heightRatio = height/patch.height;
+		}
+		else{
+			var widthRatio = 1;
+			var heightRatio = 1;
+		}
 	
-	//draw each layer
-	for(var l = 0; l< patchLayers.length; l++){
-		canvas_context.drawImage(document.getElementById(patchLayers[l].img), 
-			(patchLayers[l].x*widthRatio)+x, 
-			(patchLayers[l].y*heightRatio)+y,
-			patchLayers[l].width * widthRatio,
-			patchLayers[l].height * heightRatio);
-
-		//if selected, show selection highlighting
-		if(l == canvas_selection_index){
-			canvas_context.lineWidth = 5;
-			canvas_context.strokeStyle = "rgb(100,200,100)";//Make thicker and more apparent	
-			canvas_context.strokeRect(
+		//draw each layer
+		for(var l = 0; l< patchLayers.length; l++){
+			canvas_context.drawImage(document.getElementById(patchLayers[l].img), 
 				(patchLayers[l].x*widthRatio)+x, 
 				(patchLayers[l].y*heightRatio)+y,
 				patchLayers[l].width * widthRatio,
 				patchLayers[l].height * heightRatio);
-			canvas_context.lineWidth = 1;
-		}		
+	
+			//if selected, show selection highlighting
+			if(l == canvas_selection_index){
+				canvas_context.lineWidth = 5;
+				canvas_context.strokeStyle = "rgb(100,200,100)";//Make thicker and more apparent	
+				canvas_context.strokeRect(
+					(patchLayers[l].x*widthRatio)+x, 
+					(patchLayers[l].y*heightRatio)+y,
+					patchLayers[l].width * widthRatio,
+					patchLayers[l].height * heightRatio);
+				canvas_context.lineWidth = 1;
+			}		
+		}
 	}
 }
