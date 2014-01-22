@@ -9,17 +9,23 @@ function processLayerMouseClick(click_x, click_y){
 	var patchLayers = patch.frames[frame];
 	var numLayers = patchLayers.length;
 	clearSelectedLayer();
+
 	for(var i = numLayers-1; i>=0; i--){
 		if(click_x>10 && click_x<1005 && click_y>y-23 && click_y<y+7){
+
 			selectLayer(i);
 			setLayerSelectionOffsets(10, y-23, click_x, click_y);
 			timeline_drag = true;
 			timeline_drop_index = i;
+			
 		}
 		y+=30;
 	}
+	//if(!layerFound) clearSelectedLayer();
+
 	
 }
+
 
 //select a layer
 function selectLayer(layerNum){
@@ -113,7 +119,7 @@ timeline_canvas.addEventListener("mouseup", function(e){
 		}
 
 		patch.frames[frame] = newLayersArrangement;
-		clearSelectedLayer();
+		//clearSelectedLayer();
 		
 		timeline_drop_index = -2;
 	}

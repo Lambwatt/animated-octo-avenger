@@ -17,17 +17,22 @@
 		<button id="appendFrame" onClick="addFrame();">add frame</button>
 		<button id="insertFrame" onClick="insertFrame();">insert frame</button>
 		<button id="removeFrame" onClick="removeFrame();">remove frame</button>
-		<input type="text" id="intPerFram" value=24 onkeyup="if(event.keyCode == 13){submitIntervalsPerFrame();}"/>
+		<input type="text" id="intPerFram" value=24 onkeyup="if(event.keyCode == 13){submitIntervalsPerFrame();}"></input>
 		<br>
-
+		<button id="renameLayer" onClick="renameLayer();">rename layer</button>
+		<input type="text" id="layerFeild" onkeyup="if(event.keyCode == 13){submitText();}"></input>
+		<br>
 		<button id="printPatch" onClick="printPatch();">print patch data</button>
 		<b id=output></b>	
-		<input type="text" id="layerFeild" onkeyup="if(event.keyCode == 13){submitLayerName();}"></input>
+		
+	<!--	<input type="text" id="CanvasTextEntry" onkeyup="if(event.keyCode == 13){submitLayerName();}"></input>-->
+
 		<script src = "patch.js"></script>
 		<script src = "Model.js"></script>
 		<script src = "View.js"></script>
 		<script src = "Control.js"></script>
 		<script src = "CanvasControl.js"></script>
 		<script src = "TimelineControl.js"></script>
+		
 	</body>
 </html>

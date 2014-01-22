@@ -1,3 +1,12 @@
+var receivingFunction = function(){};
+
+function submitText(node){
+	console.log("ran submit text function");
+	receivingFunction(node);
+	receivingFunction = function(){};
+}
+
+
 //need to fix this
 function submitIntervalsPerFrame(){
 	var val =  parseInt(document.getElementById("intPerFram").value);
@@ -94,6 +103,37 @@ function removeFrame(){
 	patch.frames = newFrameset;
 }
 
+function setTextForLayerLabel(layerIndex){
+
+	if(layerIndex<0) return;
+	
+	//var tmp_x = canvas.offsetLeft + 10;
+	//var tmp_y = canvas.offsetTop + timeline_height_margin * (1+layerIndex);
+
+	var textFeild = document.getElementById("layerFeild");
+	
+	console.log(textFeild)
+	//textFeild.x = tmp_x;
+	//textFeild.y = tmp_y;
+	textFeild.style.visibility = "visible";
+
+	receivingFunction = function(){
+		console.log("ran that thing");
+		var name = document.getElementById("layerFeild").value;
+		patch.frames[frame][layerIndex].name = name;
+		receivingFunction = function(){};
+		textFeild.style.visibility = "hidden";
+	};
+	console.log("receiving function is now "+receivingFunction);
+
+	console.log("ran this thing");
+}
+
+function renameLayer(){
+	setTextForLayerLabel(timeline_selection_index);
+}
+
+
 //go to next frame
 function nextFrame(){
 	frame = (++frame)%(patch.frames.length);
@@ -118,8 +158,10 @@ function submitLayerName(){
 function printPatch(){
 	var string = JSON.stringify(patch);
 	document.getElementById("output").innerHTML = string;
-
 }
+
+
+
 
 //durn playing on or off
 function togglePlay(){
@@ -132,7 +174,6 @@ function togglePlay(){
 		document.getElementById("nextFrame").style.visibility="visible";
 		document.getElementById("previousFrame").style.visibility="visible";
 		document.getElementById("pausePlay").innerHTML = "play";
-	}
-	
+	}	
 }
 

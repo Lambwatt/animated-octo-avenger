@@ -32,7 +32,7 @@ setInterval(function() {
 		}
 		interval_count = (++interval_count)%intervalsPerFrame;
 		
-		document.getElementById("layerFeild").type = "hidden";//retrieve layer name if given //might be a relic of abandoned functionality
+		//document.getElementById("layerFeild").type = "hidden";//retrieve layer name if given //might be a relic of abandoned functionality
 
 		//draw layers section
 		drawLayers(frame);

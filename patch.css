@@ -1,3 +1,15 @@
 canvas {
 	border-style:dashed dashed dashed dashed;
+	position: relative;
 }
+
+#layerFeild {
+	visibility:hidden;
+}
+
+/*#layerFeild {
+	position:absolute;
+	x:0;
+	y:0;
+	visibility:hidden;
+}*/
