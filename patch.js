@@ -5,10 +5,18 @@
         };
 	})();*/
 
+// Check for the various File API support.
+if (window.File && window.FileReader && window.FileList && window.Blob) {
+  console.log("Great success! All the File APIs are supported");
+
+} else {
+  alert('The File APIs are not fully supported in this browser.');
+}
+
 var patch = {"width":96, "height":164, "frames":[
 	[{"name":"leg1", "img":"leg", "x":71, "y":100, "width":32, "height":64},
 	{"name":"leg2","img":"leg", "x":25, "y":80, "width":32, "height":64},
-	{"name":"torso","img":"torso", "x":16, "y":16, "width":96, "height":96}],
+	{"name":"torso","img":"torso", "x":0, "y":0, "width":96, "height":96}],
 
 	[{"name":"leg1","img":"leg", "x":71, "y":80, "width":32, "height":64},
 	{"name":"leg2","img":"leg", "x":25, "y":100, "width":32, "height":64},

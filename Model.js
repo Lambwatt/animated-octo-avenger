@@ -22,3 +22,17 @@ var intervalsPerFrame = 24;
 var x = document.getElementById("intPerFram").value;
 console.log("x = "+x);
 
+//var head = document.getElementById("head");
+var images = document.getElementsByTagName("img");
+console.log("images = "+images);
+
+var selection = document.getElementById("imageSelection");
+
+for(var i in images){
+
+	if(images[i].id!=null){
+		selection.innerHTML+='<option value="'+images[i].id+'">'+images[i].id+'</option>';
+		console.log('should have added <option value="'+images[i].id+'>'+images[i].id+'</option>');
+	}
+}
+

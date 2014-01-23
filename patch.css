@@ -3,8 +3,18 @@ canvas {
 	position: relative;
 }
 
-#layerFeild {
+#layerFeild, 
+#imageSelection,
+#newLayerName,
+#submitNewLayer {
 	visibility:hidden;
+}
+
+#catalogueInterface {
+	border-style:solid;
+	border-color:#ff0000 #0000ff;
+	width: 536;
+	height: 356;
 }
 
 /*#layerFeild {
