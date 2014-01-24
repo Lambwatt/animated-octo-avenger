@@ -27,16 +27,14 @@
 		<button id="renameLayer" onClick="renameLayer();">rename layer</button>
 		<input type="text" id="layerFeild" onkeyup="if(event.keyCode == 13){submitText();}"></input>
 		<br>
-		<button id="addLayer">add layer</button>
+		<button id="addLayer" onclick="addLayer();">add layer</button>
 		<input type="text" id="newLayerName"></input>
 		<select id="imageSelection"></select>
-		<button id="submitNewLayer">confirm</button>
+		<button id="submitNewLayer" onclick="submitNewLayer()">confirm</button>
 		<br>
 		<button id="printPatch" onClick="printPatch();">print patch data</button>
-			
 				
-		
-	<!--	<input type="text" id="CanvasTextEntry" onkeyup="if(event.keyCode == 13){submitLayerName();}"></input>-->
+		<!--<input type="text" id="CanvasTextEntry" onkeyup="if(event.keyCode == 13){submitLayerName();}"></input>-->
 
 		<script src = "patch.js"></script>
 		<script src = "Model.js"></script>

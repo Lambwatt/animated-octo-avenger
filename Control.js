@@ -6,6 +6,37 @@ function submitText(node){
 	receivingFunction = function(){};
 }
 
+function submitNewLayer(){
+	var layer_name = document.getElementById("newLayerName");
+	var image_selector = document.getElementById("imageSelection");
+	//var option = selector.option[selection.selectedIndex].value;
+//	console.log(option);
+//	console.log(JSON.stringify(option));
+	console.log("bob");	
+
+	
+
+	var image = document.getElementById(image_selector.value);
+	
+	for(var i in patch.frames){
+		patch.frames[i].push({"name":layer_name.value,"img":image_selector.value, "x":0, "y":0, "width":image.width, "height":image.height})
+	}
+
+	console.log(JSON.stringify(patch));
+	
+	//reset content
+	layer_name.value = "";
+	layer_name.style.visibility = "hidden";
+	
+	document.getElementById("imageSelection").style.visibility = "hidden";
+	document.getElementById("submitNewLayer").style.visibility = "hidden";
+}
+
+function addLayer(){
+	document.getElementById("newLayerName").style.visibility = "visible";
+	document.getElementById("imageSelection").style.visibility = "visible";
+	document.getElementById("submitNewLayer").style.visibility = "visible";
+}
 
 //need to fix this
 function submitIntervalsPerFrame(){
@@ -133,7 +164,6 @@ function renameLayer(){
 	setTextForLayerLabel(timeline_selection_index);
 }
 
-
 //go to next frame
 function nextFrame(){
 	frame = (++frame)%(patch.frames.length);
@@ -159,9 +189,6 @@ function printPatch(){
 	var string = JSON.stringify(patch);
 	document.getElementById("output").innerHTML = string;
 }
-
-
-
 
 //durn playing on or off
 function togglePlay(){
