@@ -50,14 +50,25 @@ canvas.addEventListener("mousedown", function(e){
 //react to mouse movement on the canvas area
 canvas.addEventListener("mousemove", function(e){
 
-		if(canvas_drag){
-   	 var mouse_x = e.pageX - this.offsetLeft;
-   	 var mouse_y = e.pageY - this.offsetTop;
+		var mouse_x = e.pageX - this.offsetLeft;
+   	var mouse_y = e.pageY - this.offsetTop;
 	
-			//set selection coords
-			console.log("selectionAtDragTime = "+canvas_selection_index);
-			patch.frames[frame][canvas_selection_index].x = mouse_x + canvas_selection_x_offset;
-			patch.frames[frame][canvas_selection_index].y = mouse_y + canvas_selection_y_offset;
+		if(mouse_x<canvas.width && mouse_x>=0 && mouse_y<canvas.height && mouse_y>=0 ){
+			if(canvas_drag){
+
+				//set selection coords
+				console.log("selectionAtDragTime = "+canvas_selection_index);
+				patch.frames[frame][canvas_selection_index].x = mouse_x + canvas_selection_x_offset;
+				patch.frames[frame][canvas_selection_index].y = mouse_y + canvas_selection_y_offset;
+	
+				document.getElementById("coords").innerHTML = "("+patch.frames[frame][canvas_selection_index].x+","+patch.frames[frame][canvas_selection_index].y+")";
+
+			}else{
+
+				document.getElementById("coords").innerHTML = "("+mouse_x+","+mouse_y+")";
+			}
+		}else{
+			document.getElementById("coords").innerHTML = "";
 		}
 
 });
