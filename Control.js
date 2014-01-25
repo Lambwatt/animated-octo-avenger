@@ -18,9 +18,11 @@ function submitNewLayer(){
 
 	var image = document.getElementById(image_selector.value);
 	
+	patch.layer_names[patch.max_id] = layer_name.value;
 	for(var i in patch.frames){
-		patch.frames[i].push({"name":layer_name.value,"img":image_selector.value, "x":0, "y":0, "width":image.width, "height":image.height})
+		patch.frames[i].push({"id":patch.max_id, ,"img":image_selector.value, "x":0, "y":0, "width":image.width, "height":image.height});
 	}
+	patch.max_id++;
 
 	console.log(JSON.stringify(patch));
 	

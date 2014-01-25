@@ -34,5 +34,5 @@ for(var i in images){
 		selection.innerHTML+='<option value="'+images[i].id+'">'+images[i].id+'</option>';
 		console.log('should have added <option value="'+images[i].id+'>'+images[i].id+'</option>');
 	}
-}
 
+}

@@ -6,7 +6,7 @@ function processCanvasMouseClick(click_x, click_y){
 	console.log("falsified");
 	for(var i in patch.frames[frame]){
 		var target =  patch.frames[frame][i];
-		console.log("click at ["+click_x+","+click_y+"]. x = "+target.x+" x+w"+ (target.x + target.width)+" y = "+ target.y +" y+h"+ (target.y + target.height) )
+		console.log("click at ["+click_x+","+click_y+"]. x = "+target.x+" x+w = "+ (target.x + target.width)+" y = "+ target.y +" y+h = "+ (target.y + target.height) )
 		if(click_x > target.x && click_x < target.x + target.width && click_y > target.y && click_y < target.y + target.height){
 
 			hit = true;

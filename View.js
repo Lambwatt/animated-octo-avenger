@@ -92,10 +92,11 @@ function drawLayers(frameNum){
 				timeline_context.fillStyle = "rgb(100,100,200)";
 				timeline_context.fillRect(timeline_margin_width, y-23, timeline_label_width, timeline_layer_height);	
 			}	
+
 			timeline_context.strokeStyle = "rgb(0,0,0)";
 			timeline_context.strokeRect(timeline_margin_width, y-23, timeline_label_width, timeline_layer_height);
 			timeline_context.fillStyle = "rgb(0,0,0)";	
-			timeline_context.fillText(patchLayers[i].name, timeline_margin_width+timeline_label_indent, y, timeline_text_width);
+			timeline_context.fillText(patch.layer_names[patchLayers[i].id], timeline_margin_width+timeline_label_indent, y, timeline_text_width);
 	
 			y+=timeline_layer_height;
 			
@@ -120,8 +121,9 @@ function drawLayers(frameNum){
 	
 			timeline_context.strokeRect(timeline_selection_x, timeline_selection_y, timeline_label_width, timeline_layer_height);
 			timeline_context.fillStyle = "rgb(0,0,0)";	
-			timeline_context.fillText(patchLayers[timeline_selection_index].name, timeline_selection_x+timeline_label_indent, timeline_selection_y+23, timeline_text_width);
-	
+			if(i>=0){
+				timeline_context.fillText(patch.layer_names[patchLayers[i].id], timeline_selection_x+timeline_label_indent, timeline_selection_y+23, timeline_text_width);
+			}//diff this. something was changed.
 		}
 	}
 }
