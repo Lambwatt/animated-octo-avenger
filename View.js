@@ -17,10 +17,23 @@ var timeline_frame_offset = 0;
 
 var timeline_width = 750;
 var timeline_layer_height = 30;
+
+var canvas_block_size = 8;
+
+var grid_canvas = document.createElement('canvas');
+grid_canvas.width = canvas.width;
+grid_canvas.height = canvas.height;
+var grid_canvas_context = grid_canvas.getContext('2d');
+
+drawGrid();
+
 //set refresh interval for all screens. function runs all rendering //consider splitting up
 setInterval(function() {
 		//clear canvas
 		canvas_context.clearRect(0 , 0 , canvas.width, canvas.height);
+
+		canvas_context.drawImage(grid_canvas, 0, 0, canvas.width, canvas.height);
+		
 
 		//draw frame in canvas
     drawFrame(canvas_context, frame, 0, 0, 96, 164);
@@ -127,3 +140,15 @@ function drawLayers(frameNum){
 		}
 	}
 }
+
+function drawGrid(){
+	grid_canvas_context.clearRect(0,0,grid_canvas.width, grid_canvas.height);
+	for(var i = 0; i<canvas.width/(canvas_block_size);i+=2){
+		for(var j = 0; j<canvas.width/(canvas_block_size);j+=2){
+			grid_canvas_context.fillStyle = "rgb(200,200,200)";
+			grid_canvas_context.fillRect(i*canvas_block_size, j*canvas_block_size+canvas_block_size, canvas_block_size, canvas_block_size);
+			grid_canvas_context.fillRect(i*canvas_block_size+canvas_block_size, j*canvas_block_size, canvas_block_size, canvas_block_size);
+		}
+	}
+}
+
