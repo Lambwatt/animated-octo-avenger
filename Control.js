@@ -55,7 +55,33 @@ function submitIntervalsPerFrame(){
 		document.getElementById("intPerFram").style.value = intervalsPerFrame;
 		console.log("val rejected");
 	}
+	document.getElementById("")
+	drawGrid
 }
+
+function raiseBlockSize(){
+	canvas_block_size++;
+	if(canvas_block_size>=canvas.width/2){
+		document.getElementById("raiseBlockSize").style.visibility = "hidden";
+	}
+	else{
+		document.getElementById("raiseBlockSize").style.visibility = "visible";
+	}
+	document.getElementById("blockSize").style.value = canvas_block_size;
+	drawGrid();
+}
+
+function lowerBlockSize(){
+	canvas_block_size--;
+	if(canvas_block_size<=1){
+		document.getElementById("lowerBlockSize").style.visibility = "hidden";
+	}
+	else{
+		document.getElementById("lowerBlockSize").style.visibility = "visible";
+	}
+	document.getElementById("blockSize").style.value = canvas_block_size;
+	drawGrid();
+}	
 
 //add frame (more precisely, append frame)
 function addFrame(){

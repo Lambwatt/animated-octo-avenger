@@ -33,6 +33,19 @@
 		<button id="submitNewLayer" onclick="submitNewLayer()">confirm</button>
 		<button id="deleteLayer" onClick = "deleteLayer()">delete layer</button>
 		<br>
+	
+	<!--	<button id = "lowerBlockSize"></button>
+		<label id="blockSize">0<label>
+		<button id="raiseBlockSize"></button>-->
+		
+		<label>Block size:</label>
+		<button id = "lowerBlockSize" onClick="lowerBlockSize()">smaller</button>
+		<label id="blockSize">0</label>
+		<!--<input type="text" id="blockSize" onkeyup="if(event.keyCode == 13){submitText();}"></input>  Probably a better plan. Also figure out what that thing is called.-->
+		<button id="raiseBlockSize" onClick="raiseBlockSize()">bigger</button>
+
+		<br>
+		
 		<button id="printPatch" onClick="printPatch();">print patch data</button>
 				
 		<!--<input type="text" id="CanvasTextEntry" onkeyup="if(event.keyCode == 13){submitLayerName();}"></input>-->
