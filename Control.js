@@ -20,7 +20,7 @@ function submitNewLayer(){
 	
 	patch.layer_names[patch.max_id] = layer_name.value;
 	for(var i in patch.frames){
-		patch.frames[i].push({"id":patch.max_id, ,"img":image_selector.value, "x":0, "y":0, "width":image.width, "height":image.height});
+		patch.frames[i].push({"id":patch.max_id,"img":image_selector.value, "x":0, "y":0, "width":image.width, "height":image.height});
 	}
 	patch.max_id++;
 
@@ -32,6 +32,10 @@ function submitNewLayer(){
 	
 	document.getElementById("imageSelection").style.visibility = "hidden";
 	document.getElementById("submitNewLayer").style.visibility = "hidden";
+}
+
+function deleteLayer(){
+	patch.frames[frame].splice(timeline_selection_index, 1);
 }
 
 function addLayer(){
