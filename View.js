@@ -27,6 +27,13 @@ var grid_canvas_context = grid_canvas.getContext('2d');
 
 drawGrid();
 
+var timeline_grid_canvas = document.createElement('canvas');
+timeline_grid_canvas.width = timeline_canvas.width;
+timeline_grid_canvas.height = timeline_canvas.height;
+var timeline_grid_canvas_context = timeline_grid_canvas.getContext('2d');
+
+drawTimeline();
+
 //set refresh interval for all screens. function runs all rendering //consider splitting up
 setInterval(function() {
 		//clear canvas
@@ -54,29 +61,10 @@ setInterval(function() {
 //layer rendering function
 function drawLayers(frameNum){
 
-	timeline_context.clearRect(0 , 0 , canvas.width, canvas.height);
-	
-	var y = timeline_height_margin;
-	
-//	timeline_context.strokeStyle = "rgb(0,0,0)";
-//	timeline_context.strokeRect(timeline_margin_width+timeline_label_width, y-23, timeline_width, timeline_layer_height);
+	timeline_context.clearRect(0 , 0 , timeline_canvas.width, timeline_canvas.height);
+	timeline_context.drawImage(timeline_grid_canvas, 0, 0, timeline_canvas.width, timeline_canvas.height);
 
-/*	timeline_context.beginPath();
-	for(var i = 0; i<15; i++){
-		timeline_context.moveTo(timeline_margin_width+timeline_label_width + (i*50),y-23);
-		timeline_context.lineTo(timeline_margin_width+timeline_label_width + (i*50),y+6);
-		
-		timeline_context.fillText(i, timeline_margin_width+timeline_label_width +(i*50)+2.5, y, 20);
-
-		timeline_context.moveTo(timeline_margin_width+timeline_label_width + (i*50) + 25,y-23);
-		timeline_context.lineTo(timeline_margin_width+timeline_label_width + (i*50) + 25,y+6);
-
-	}
-	timeline_context.stroke();*/
-
-
-//	y+= timeline_layer_height;
-
+	var y = timeline_height_margin + timeline_layer_height;
 
 	var patchLayers = patch.frames[frameNum];//Replace with frame offset
 	if(patchLayers != null){
@@ -138,23 +126,49 @@ function drawLayers(frameNum){
 				timeline_context.fillText(patch.layer_names[patchLayers[i].id], timeline_selection_x+timeline_label_indent, timeline_selection_y+23, timeline_text_width);
 			}//diff this. something was changed.
 		}
+
+		
 	}
+	
+
 }
+
 
 function drawGrid(){
 	console.log(""+canvas.width+"x"+canvas.height+" area redone with block size: "+canvas_block_size);
 	grid_canvas_context.clearRect(0,0,grid_canvas.width, grid_canvas.height);
-	var num_col = 0;
-	var num_row = 0;
 	for(var i = 0; i<canvas.width; i+=2*canvas_block_size){
-		num_col++;
 		for(var j = 0; j<canvas.height;j+=2*canvas_block_size){
-			consolenum_row++;
 			grid_canvas_context.fillStyle = "rgb(200,200,200)";
 			grid_canvas_context.fillRect(i, j+canvas_block_size, canvas_block_size, canvas_block_size);
 			grid_canvas_context.fillRect(i+canvas_block_size, j, canvas_block_size, canvas_block_size);
 		}
 	}
-	console.log("finished generation with "+num_row+" rows and "+num_col+" columns");
 }
 
+
+function drawTimeline(){
+	
+	timeline_grid_canvas_context.clearRect(0,0,timeline_grid_canvas.width, timeline_grid_canvas.height);
+
+	var y = timeline_height_margin;
+
+	timeline_grid_canvas_context.strokeStyle = "rgb(0,0,0)";
+	timeline_grid_canvas_context.strokeRect(timeline_margin_width+timeline_label_width, y-23, timeline_width, timeline_layer_height);
+
+	timeline_grid_canvas_context.beginPath();
+	for(var i = 0; i<15; i++){
+		console.log("hello");
+		timeline_grid_canvas_context.moveTo(timeline_margin_width+timeline_label_width + (i*50),y-23);
+		timeline_grid_canvas_context.lineTo(timeline_margin_width+timeline_label_width + (i*50),y+6);
+		
+		timeline_grid_canvas_context.fillText(i, timeline_margin_width+timeline_label_width +(i*50)+2.5, y, 20);
+
+		timeline_grid_canvas_context.moveTo(timeline_margin_width+timeline_label_width + (i*50) + 25,y-23);
+		timeline_grid_canvas_context.lineTo(timeline_margin_width+timeline_label_width + (i*50) + 25,y+6);
+
+	}
+	timeline_grid_canvas_context.stroke();
+	console.log("finished draw timeline.");
+
+}
