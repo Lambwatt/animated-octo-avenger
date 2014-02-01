@@ -58,8 +58,8 @@ canvas.addEventListener("mousemove", function(e){
 
 				//set selection coords
 				console.log("selectionAtDragTime = "+canvas_selection_index);
-				patch.frames[frame][canvas_selection_index].x = mouse_x + canvas_selection_x_offset;
-				patch.frames[frame][canvas_selection_index].y = mouse_y + canvas_selection_y_offset;
+				patch.frames[frame][canvas_selection_index].x = (mouse_x + canvas_selection_x_offset) - (mouse_x + canvas_selection_x_offset) % canvas_block_size;
+				patch.frames[frame][canvas_selection_index].y = (mouse_y + canvas_selection_y_offset) - (mouse_y + canvas_selection_y_offset) % canvas_block_size;
 	
 				document.getElementById("coords").innerHTML = "("+patch.frames[frame][canvas_selection_index].x+","+patch.frames[frame][canvas_selection_index].y+")";
 

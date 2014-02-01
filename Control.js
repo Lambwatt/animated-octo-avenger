@@ -6,6 +6,24 @@ function submitText(node){
 	receivingFunction = function(){};
 }
 
+document.getElementById("blockSize").value = canvas_block_size;
+
+function submitBlockSize(){
+	var val =  parseInt(document.getElementById("blockSize").value);
+	console.log("val vs number is = "+(typeof val));
+	if( (typeof val) == 'number' ){
+		canvas_block_size = Math.abs(Math.floor(val));
+		console.log("val accepted");
+	}else{
+		document.getElementById("blockSize").value = canvas_block_size;
+		console.log("val rejected");
+	}
+/*	 = document.getElementById("").value;
+	document.getElementById("blockSize").value = ;
+	drawGrid();*/
+	drawGrid();
+}
+
 function submitNewLayer(){
 	var layer_name = document.getElementById("newLayerName");
 	var image_selector = document.getElementById("imageSelection");
@@ -52,14 +70,14 @@ function submitIntervalsPerFrame(){
 		intervalsPerFrame = Math.abs(Math.floor(val));
 		console.log("val accepted");
 	}else{
-		document.getElementById("intPerFram").style.value = intervalsPerFrame;
+		document.getElementById("intPerFram").value = intervalsPerFrame;
 		console.log("val rejected");
 	}
-	document.getElementById("")
-	drawGrid
+	//document.getElementById("")
 }
 
 function raiseBlockSize(){
+	console.log("got here");
 	canvas_block_size++;
 	if(canvas_block_size>=canvas.width/2){
 		document.getElementById("raiseBlockSize").style.visibility = "hidden";
@@ -67,7 +85,12 @@ function raiseBlockSize(){
 	else{
 		document.getElementById("raiseBlockSize").style.visibility = "visible";
 	}
-	document.getElementById("blockSize").style.value = canvas_block_size;
+
+	if(canvas_block_size>=1){
+		document.getElementById("lowerBlockSize").style.visibility = "visible";
+	}
+	
+	document.getElementById("blockSize").value = canvas_block_size;
 	drawGrid();
 }
 
@@ -79,7 +102,11 @@ function lowerBlockSize(){
 	else{
 		document.getElementById("lowerBlockSize").style.visibility = "visible";
 	}
-	document.getElementById("blockSize").style.value = canvas_block_size;
+	if(canvas_block_size<=canvas.width/2){
+		document.getElementById("raiseBlockSize").style.visibility = "visible";
+	}
+
+	document.getElementById("blockSize").value = canvas_block_size;
 	drawGrid();
 }	
 

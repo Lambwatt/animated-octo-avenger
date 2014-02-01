@@ -142,13 +142,19 @@ function drawLayers(frameNum){
 }
 
 function drawGrid(){
+	console.log(""+canvas.width+"x"+canvas.height+" area redone with block size: "+canvas_block_size);
 	grid_canvas_context.clearRect(0,0,grid_canvas.width, grid_canvas.height);
-	for(var i = 0; i<canvas.width/(canvas_block_size);i+=2){
-		for(var j = 0; j<canvas.width/(canvas_block_size);j+=2){
+	var num_col = 0;
+	var num_row = 0;
+	for(var i = 0; i<canvas.width; i+=2*canvas_block_size){
+		num_col++;
+		for(var j = 0; j<canvas.height;j+=2*canvas_block_size){
+			consolenum_row++;
 			grid_canvas_context.fillStyle = "rgb(200,200,200)";
-			grid_canvas_context.fillRect(i*canvas_block_size, j*canvas_block_size+canvas_block_size, canvas_block_size, canvas_block_size);
-			grid_canvas_context.fillRect(i*canvas_block_size+canvas_block_size, j*canvas_block_size, canvas_block_size, canvas_block_size);
+			grid_canvas_context.fillRect(i, j+canvas_block_size, canvas_block_size, canvas_block_size);
+			grid_canvas_context.fillRect(i+canvas_block_size, j, canvas_block_size, canvas_block_size);
 		}
 	}
+	console.log("finished generation with "+num_row+" rows and "+num_col+" columns");
 }
 
