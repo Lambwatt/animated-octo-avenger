@@ -3,7 +3,7 @@ timeline_context.font="32px Courier New";	//Layer display font
 //process a mouse click in the layer area
 function processLayerMouseClick(click_x, click_y){
 
-	var y = 30;
+	var y = timeline_top_margin+timeline_layer_height;
 	timeline_drag  = false;
 
 	var patchLayers = patch.frames[frame];
@@ -11,7 +11,7 @@ function processLayerMouseClick(click_x, click_y){
 	clearSelectedLayer();
 
 	for(var i = numLayers-1; i>=0; i--){
-		if(click_x>10 && click_x<1005 && click_y>y-23 && click_y<y+7){
+		if(click_x>timeline_left_margin && click_x<timeline_frame_margin && click_y>y-23 && click_y<y+7){
 
 			selectLayer(i);
 			setLayerSelectionOffsets(10, y-23, click_x, click_y);

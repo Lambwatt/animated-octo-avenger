@@ -6,14 +6,34 @@ var canvas_context = canvas.getContext("2d");
 var timeline_canvas = document.getElementById("timeline_canvas");
 var timeline_context = timeline_canvas.getContext("2d");
 
-var timeline_margin_width = 10;
-var timeline_height_margin = 30;
-var timeline_label_indent = 10;
+/* old values
+var timeline_left_margin = 10;
+var timeline_top_margin = 30;
+var timeline_label_left_margin = 10;
 var timeline_label_width = 256;
 var timeline_text_width = 251;
 var timeline_drop_index_width = 246;
 var timeline_drop_index_height = 20;
 var timeline_frame_offset = 0;
+*/
+
+//New values
+var timeline_left_margin = 10;
+var timeline_top_margin = 30;
+var timeline_right_margin = 10;
+var timeline_bottom_margin = 0;
+var timeline_frame_offset = 0;
+
+var timeline_label_left_margin = 10;
+var timeline_label_top_margin = 0;
+
+var timeline_text_width = 251;//adjust when changing the frame margin
+
+var timeline_label_width = 256;
+var timeline_frame_margin = timeline_left_margin+timeline_label_width;
+
+var timeline_drop_index_width = 246;
+var timeline_drop_index_height = 20;
 
 var timeline_width = 750;
 var timeline_layer_height = 30;
@@ -64,7 +84,7 @@ function drawLayers(frameNum){
 	timeline_context.clearRect(0 , 0 , timeline_canvas.width, timeline_canvas.height);
 	timeline_context.drawImage(timeline_grid_canvas, 0, 0, timeline_canvas.width, timeline_canvas.height);
 
-	var y = timeline_height_margin + timeline_layer_height;
+	var y = timeline_top_margin + timeline_layer_height;
 
 	var patchLayers = patch.frames[frameNum];//Replace with frame offset
 	if(patchLayers != null){
@@ -91,13 +111,13 @@ function drawLayers(frameNum){
 			if(i == timeline_selection_index){
 				if(timeline_drag) continue;
 				timeline_context.fillStyle = "rgb(100,100,200)";
-				timeline_context.fillRect(timeline_margin_width, y-23, timeline_label_width, timeline_layer_height);	
+				timeline_context.fillRect(timeline_left_margin, y-23, timeline_label_width, timeline_layer_height);	
 			}	
 
 			timeline_context.strokeStyle = "rgb(0,0,0)";
-			timeline_context.strokeRect(timeline_margin_width, y-23, timeline_label_width, timeline_layer_height);
+			timeline_context.strokeRect(timeline_left_margin, y-23, timeline_label_width, timeline_layer_height);
 			timeline_context.fillStyle = "rgb(0,0,0)";	
-			timeline_context.fillText(patch.layer_names[patchLayers[i].id], timeline_margin_width+timeline_label_indent, y, timeline_text_width);
+			timeline_context.fillText(patch.layer_names[patchLayers[i].id], timeline_left_margin+timeline_label_left_margin, y, timeline_text_width);
 	
 			y+=timeline_layer_height;
 			
@@ -123,7 +143,7 @@ function drawLayers(frameNum){
 			timeline_context.strokeRect(timeline_selection_x, timeline_selection_y, timeline_label_width, timeline_layer_height);
 			timeline_context.fillStyle = "rgb(0,0,0)";	
 			if(i>=0){
-				timeline_context.fillText(patch.layer_names[patchLayers[i].id], timeline_selection_x+timeline_label_indent, timeline_selection_y+23, timeline_text_width);
+				timeline_context.fillText(patch.layer_names[patchLayers[i].id], timeline_selection_x+timeline_label_left_margin, timeline_selection_y+23, timeline_text_width);
 			}//diff this. something was changed.
 		}
 
@@ -151,21 +171,21 @@ function drawTimeline(){
 	
 	timeline_grid_canvas_context.clearRect(0,0,timeline_grid_canvas.width, timeline_grid_canvas.height);
 
-	var y = timeline_height_margin;
+	var y = timeline_top_margin;
 
 	timeline_grid_canvas_context.strokeStyle = "rgb(0,0,0)";
-	timeline_grid_canvas_context.strokeRect(timeline_margin_width+timeline_label_width, y-23, timeline_width, timeline_layer_height);
+	timeline_grid_canvas_context.strokeRect(timeline_frame_margin, y-23, timeline_width, timeline_layer_height);
 
 	timeline_grid_canvas_context.beginPath();
 	for(var i = 0; i<15; i++){
 		console.log("hello");
-		timeline_grid_canvas_context.moveTo(timeline_margin_width+timeline_label_width + (i*50),y-23);
-		timeline_grid_canvas_context.lineTo(timeline_margin_width+timeline_label_width + (i*50),y+6);
+		timeline_grid_canvas_context.moveTo(timeline_frame_margin + (i*50),y-23);
+		timeline_grid_canvas_context.lineTo(timeline_frame_margin + (i*50),y+6);
 		
-		timeline_grid_canvas_context.fillText(i, timeline_margin_width+timeline_label_width +(i*50)+2.5, y, 20);
+		timeline_grid_canvas_context.fillText(i, timeline_frame_margin +(i*50)+2.5, y, 20);
 
-		timeline_grid_canvas_context.moveTo(timeline_margin_width+timeline_label_width + (i*50) + 25,y-23);
-		timeline_grid_canvas_context.lineTo(timeline_margin_width+timeline_label_width + (i*50) + 25,y+6);
+		timeline_grid_canvas_context.moveTo(timeline_frame_margin + (i*50) + 25,y-23);
+		timeline_grid_canvas_context.lineTo(timeline_frame_margin + (i*50) + 25,y+6);
 
 	}
 	timeline_grid_canvas_context.stroke();
